@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion - CollabÉpargne{% endblock %}
+
+{% block body %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+{% endblock %}
+
+{% include 'partials/header.html.twig' %} {# Inclusion du header #}
+
+<main class="main-content">
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Connexion</h1>
+            <p>Heureux de vous revoir ! Connectez-vous pour accéder à votre compte.</p>
+        </div>
+        
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+        
+        {% if app.user %}
+            <div class="mb-3">
+                Vous êtes connecté en tant que {{ app.user.userIdentifier }}, 
+                <a href="{{ path('app_logout') }}">Déconnexion</a>
+            </div>
+        {% else %}
+            <form method="post">
+                <div class="form-group">
+                    <label for="inputEmail">Adresse e-mail</label>
+                    <input type="email" id="inputEmail" name="email" class="form-control" value="{{ last_username }}" required autofocus>
+                </div>
+                
+                <div class="form-group">
+                    <label for="inputPassword">Mot de passe</label>
+                    <input type="password" id="inputPassword" name="password" class="form-control" required>
+                </div>
+                
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </form>
+            <br>
+            <div class="forgot-password">
+                <a href="#">Mot de passe oublié ?</a>
+            </div>
+            
+            <div class="divider">
+                <span>ou</span>
+            </div>
+            
+            <div class="signup-link">
+                <p>Vous n'avez pas de compte ? <a href="{{ path('app_register') }}">S'inscrire</a></p>
+            </div>
+        {% endif %}
+    </div>
+</main>
+
+{% include 'partials/footer.html.twig' %} {# Inclusion du footer #}
+{% endblock %}

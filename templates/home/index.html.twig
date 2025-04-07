@@ -1,0 +1,180 @@
+{% extends 'base.html.twig' %}
+
+
+{% block title %}Epargne Collaborative{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/script.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <header>
+        <nav>
+            <div class="logo">Collab<span>Épargne</span></div>
+            <ul class="nav-links">
+                <li><a href="#fonctionnalites">Fonctionnalités</a></li>
+                <li><a href="#comment-ca-marche">Comment ça marche</a></li>
+                <li><a href="#propos">À propos</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <div class="buttons">
+                <a href="{{ path('app_login') }}" class="btn btn-secondary">Se connecter</a>
+                <a href="{{ path('app_register') }}" class="btn btn-primary">S'inscrire</a>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="slideshow-container">
+        <div class="slide active" style="background-image: url('{{ asset('image/img1.jpg') }}')" alt="Image d'accueil">
+            <div class="hero-content">
+                <h1>L'épargne <span>collaborative</span> pour atteindre vos objectifs ensemble</h1>
+                <p>Une plateforme sécurisée qui vous permet d'épargner collectivement et d'atteindre plus rapidement vos objectifs financiers grâce à la force du groupe.</p>
+                <a href="#" class="btn btn-primary hero-btn">Commencer gratuitement</a>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('{{ asset('image/img2.jpg') }}')" alt="Image d'accueil">
+            <div class="hero-content">
+                <h1>Épargnez <span>ensemble</span>, réalisez vos rêves</h1>
+                <p>Créez des cagnottes communes, suivez votre progression en temps réel et atteignez vos objectifs financiers plus rapidement.</p>
+                <a href="#" class="btn btn-primary hero-btn">Découvrir nos solutions</a>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('{{ asset('image/img3.jpg') }}')" alt="Image d'accueil">
+            <div class="hero-content">
+                <h1>La puissance du <span>collectif</span> au service de votre avenir</h1>
+                <p>Que ce soit pour un projet immobilier, des vacances de rêve ou un fonds d'urgence, notre plateforme sécurisée vous accompagne à chaque étape.</p>
+                <a href="#" class="btn btn-primary hero-btn">Rejoindre la communauté</a>
+            </div>
+        </div>
+    </div>
+    
+    <section class="features" id="fonctionnalites">
+        <div class="section-title">
+            <h2>Nos fonctionnalités</h2>
+            <p>Découvrez les outils innovants qui font de CollabÉpargne la meilleure plateforme d'épargne collaborative.</p>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Cagnottes collaboratives</h3>
+                <p>Créez des cagnottes partagées avec vos proches ou collègues pour des projets communs ou personnels.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Sécurité maximale</h3>
+                <p>Vos fonds sont sécurisés avec les dernières technologies de cryptage et de protection des données.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Suivi en temps réel</h3>
+                <p>Visualisez la progression de votre épargne et celle de votre groupe avec des tableaux de bord intuitifs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Objectifs personnalisés</h3>
+                <p>Définissez des objectifs d'épargne précis et suivez votre progression pas à pas.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Application mobile</h3>
+                <p>Gérez votre épargne collaborative où que vous soyez grâce à notre application mobile intuitive.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤝</div>
+                <h3>Versements flexibles</h3>
+                <p>Choisissez le montant et la fréquence de vos contributions selon vos capacités financières.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="how-it-works" id="comment-ca-marche">
+        <div class="section-title">
+            <h2>Comment ça marche</h2>
+            <p>Commencez votre voyage d'épargne collaborative en quelques étapes simples.</p>
+        </div>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Créez votre compte</h3>
+                <p>Inscrivez-vous gratuitement en quelques minutes et vérifiez votre identité pour sécuriser votre compte.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Créez ou rejoignez un groupe</h3>
+                <p>Formez votre propre groupe d'épargne ou rejoignez un groupe existant avec un code d'invitation.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Définissez vos objectifs</h3>
+                <p>Établissez ensemble les objectifs d'épargne et les règles de contribution du groupe.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Épargnez ensemble</h3>
+                <p>Contribuez régulièrement et suivez la progression collective vers vos objectifs financiers.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="testimonials" id="propos">
+        <div class="testimonial-container">
+            <div class="section-title">
+                <h2>Ce que nos utilisateurs disent</h2>
+                <p>Découvrez les expériences de nos membres qui ont atteint leurs objectifs grâce à l'épargne collaborative.</p>
+            </div>
+            <div class="testimonial-slider">
+                <p class="testimonial-quote">"Grâce à CollabÉpargne, notre groupe d'amis a pu financer notre voyage en Asie en seulement 6 mois. La plateforme est incroyablement facile à utiliser et nous a permis de rester motivés tout au long du processus d'épargne."</p>
+                <p class="testimonial-author">Sophie Dupont</p>
+                <p class="testimonial-role">Utilisatrice depuis 1 an</p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="cta">
+        <h2>Prêt à commencer votre aventure d'épargne collaborative?</h2>
+        <p>Rejoignez des milliers d'utilisateurs qui atteignent leurs objectifs financiers plus rapidement grâce à la force du collectif.</p>
+        <a href="{{ path('app_register') }}" class="btn btn-primary">Créer un compte gratuit</a>
+    </section>
+    
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>CollabÉpargne</h3>
+                <p>La plateforme d'épargne collaborative qui vous aide à atteindre vos objectifs financiers plus rapidement grâce à la force du groupe.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Navigation</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Accueil</a></li>
+                    <li><a href="#fonctionnalites">Fonctionnalités</a></li>
+                    <li><a href="#comment-ca-marche">Comment ça marche</a></li>
+                    <li><a href="#propos">À propos</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Légal</h3>
+                <ul class="footer-links">
+                    <li><a href="{{ path('app_condition') }}">Conditions d'utilisation</a></li>
+                    <li><a href="{{ path('app_potilique') }}">Politique de confidentialité</a></li>
+                    
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <ul class="footer-links">
+                    <li><a href="mailto:contact@collabepargne.fr">contact@collabepargne.fr</a></li>
+                    <li><a href="tel:+2290151436520">+229 0151436520</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+             <p>&copy; 2025 CollabÉpargne | <a href="{{ path('app_potilique') }}">Politique de confidentialité</a> | <a href="{{ path('app_condition') }}">Conditions d'utilisation</a></p>
+        </div>
+    </footer>
+{% endblock %}
+

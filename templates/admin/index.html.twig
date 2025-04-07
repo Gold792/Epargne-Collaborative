@@ -1,0 +1,292 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Page Administration - CollabÉpargne{% endblock %}
+
+{% block body %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+{% endblock %}
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <span style="font-size: 24px;">🐖</span>
+                <h2>ÉpargneCollect</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <span class="emoji">📊</span>
+                    <span>Tableau de bord</span>
+                </li>
+                <li class="nav-item">
+                    <span class="emoji">👥</span>
+                    <span>Utilisateurs</span>
+                </li>
+                <li class="nav-item">
+                    <span class="emoji">💰</span>
+                    <span>Projets d'épargne</span>
+                </li>
+                <li class="nav-item">
+                    <span class="emoji">🔄</span>
+                    <span>Transactions</span>
+                </li>
+                <li class="nav-item">
+                    <span class="emoji">📈</span>
+                    <span>Rapports</span>
+                </li>
+                <li class="nav-item">
+                    <span class="emoji">⚙️</span>
+                    <span>Paramètres</span>
+                </li>
+                <li class="nav-item">
+                    <span class="emoji">❓</span>
+                    <span>Support</span>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+            <div class="sidebar-menu-item">
+                <span><a href="{{ path('app_logout') }}" class="btn btn-danger">🚪 Déconnexion</a></span>
+            </div>
+        </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="page-title">
+                    <h1>Tableau de bord administrateur</h1>
+                </div>
+                <div class="user-info">
+                    <img src="{{ asset('image/user.png') }}" alt="Admin">
+                    <div>
+                        <div>Admin Principal</div>
+                        <small style="color: var(--neutral);">admin@epargne-collect.fr</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">UTILISATEURS TOTAUX</span>
+                        <div class="stat-icon icon-blue">
+                            <span>👥</span>
+                        </div>
+                    </div>
+                    <div class="stat-value">4,872</div>
+                    <div class="stat-trend trend-up">
+                        <span>⬆️</span> +12.5% ce mois
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">PROJETS ACTIFS</span>
+                        <div class="stat-icon icon-green">
+                            <span>📋</span>
+                        </div>
+                    </div>
+                    <div class="stat-value">237</div>
+                    <div class="stat-trend trend-up">
+                        <span>⬆️</span> +5.2% ce mois
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">ÉPARGNE TOTALE (€)</span>
+                        <div class="stat-icon icon-blue">
+                            <span>💶</span>
+                        </div>
+                    </div>
+                    <div class="stat-value">3,854,672 €</div>
+                    <div class="stat-trend trend-up">
+                        <span>⬆️</span> +7.8% ce mois
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <span class="stat-title">TRANSACTIONS DU JOUR</span>
+                        <div class="stat-icon icon-green">
+                            <span>🔄</span>
+                        </div>
+                    </div>
+                    <div class="stat-value">142</div>
+                    <div class="stat-trend trend-down">
+                        <span>⬇️</span> -3.4% vs hier
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tables -->
+            <div class="data-tables">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">Projets d'épargne récents</h3>
+                        <button class="btn btn-primary">
+                            <span class="emoji">➕</span> Nouveau projet
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom du projet</th>
+                                <th>Initiateur</th>
+                                <th>Participants</th>
+                                <th>Montant cible</th>
+                                <th>Collecté</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Épargne Immobilière Groupe 12</td>
+                                <td>Marie Legrand</td>
+                                <td>24</td>
+                                <td>50,000 €</td>
+                                <td>38,750 €</td>
+                                <td><span class="status status-active">Actif</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn">✏️</button>
+                                    <button class="action-btn delete-btn">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Investissement Solaire</td>
+                                <td>Jean Dupont</td>
+                                <td>18</td>
+                                <td>75,000 €</td>
+                                <td>32,450 €</td>
+                                <td><span class="status status-active">Actif</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn">✏️</button>
+                                    <button class="action-btn delete-btn">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Épargne Études Supérieures</td>
+                                <td>Sophie Martin</td>
+                                <td>8</td>
+                                <td>24,000 €</td>
+                                <td>24,000 €</td>
+                                <td><span class="status status-active">Complété</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn">✏️</button>
+                                    <button class="action-btn delete-btn">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Fonds Communautaire Quartier Est</td>
+                                <td>Karim Benali</td>
+                                <td>42</td>
+                                <td>120,000 €</td>
+                                <td>87,650 €</td>
+                                <td><span class="status status-active">Actif</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn">✏️</button>
+                                    <button class="action-btn delete-btn">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Épargne Vacances Collaborative</td>
+                                <td>Nicolas Petit</td>
+                                <td>12</td>
+                                <td>15,000 €</td>
+                                <td>4,250 €</td>
+                                <td><span class="status status-pending">En cours</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn">✏️</button>
+                                    <button class="action-btn delete-btn">🗑️</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3 class="table-title">Derniers utilisateurs inscrits</h3>
+                        <button class="btn btn-secondary">
+                            <span class="emoji">👤</span> Ajouter utilisateur
+                        </button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Date d'inscription</th>
+                                <th>Projets</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Thomas Mercier</td>
+                                <td>t.mercier@email.com</td>
+                                <td>01/04/2025</td>
+                                <td>2</td>
+                                <td><span class="status status-active">Actif</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn">✏️</button>
+                                    <button class="action-btn delete-btn">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Léa Bernard</td>
+                                <td>l.bernard@email.com</td>
+                                <td>31/03/2025</td>
+                                <td>0</td>
+                                <td><span class="status status-pending">En attente</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn">✏️</button>
+                                    <button class="action-btn delete-btn">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Alexandre Morel</td>
+                                <td>a.morel@email.com</td>
+                                <td>30/03/2025</td>
+                                <td>1</td>
+                                <td><span class="status status-active">Actif</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn">✏️</button>
+                                    <button class="action-btn delete-btn">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Camille Rousseau</td>
+                                <td>c.rousseau@email.com</td>
+                                <td>29/03/2025</td>
+                                <td>3</td>
+                                <td><span class="status status-active">Actif</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn">✏️</button>
+                                    <button class="action-btn delete-btn">🗑️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Paul Lefebvre</td>
+                                <td>p.lefebvre@email.com</td>
+                                <td>28/03/2025</td>
+                                <td>0</td>
+                                <td><span class="status status-inactive">Inactif</span></td>
+                                <td>
+                                    <button class="action-btn edit-btn">✏️</button>
+                                    <button class="action-btn delete-btn">🗑️</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    <script src="{{ asset('js/utilisateur.js') }}"></script>
+{% endblock %}

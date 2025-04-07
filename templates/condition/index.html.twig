@@ -1,0 +1,138 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conditions d'utilisation - CollabÉpargne{% endblock %}
+
+{% block body %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/condition.css') }}">
+{% endblock %}
+{% include 'partials/header.html.twig' %} {# Inclusion du header #}
+
+    <main class="main-content">
+        <div class="terms-container">
+            <div class="terms-header">
+                <h1>Conditions d'Utilisation</h1>
+                <p>Veuillez lire attentivement ces conditions avant d'utiliser nos services</p>
+            </div>
+            
+            <div class="section">
+                <h2>1. Acceptation des conditions</h2>
+                <p>En accédant ou en utilisant la plateforme CollabÉpargne (ci-après "la Plateforme"), vous acceptez d'être lié par les présentes Conditions d'Utilisation. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre Plateforme.</p>
+                <p>Ces conditions constituent un accord juridiquement contraignant entre vous et CollabÉpargne concernant l'utilisation de nos services. Nous nous réservons le droit de modifier ces conditions à tout moment, avec notification préalable.</p>
+            </div>
+            
+            <div class="section">
+                <h2>2. Description du service</h2>
+                <p>CollabÉpargne est une plateforme d'épargne collaborative qui permet aux utilisateurs de créer des groupes d'épargne, de définir des objectifs communs et de gérer collectivement leur épargne.</p>
+                <p>Nos services comprennent, sans s'y limiter :</p>
+                <ul>
+                    <li>La création et la gestion de comptes d'épargne individuels et collectifs</li>
+                    <li>La définition d'objectifs d'épargne</li>
+                    <li>Le suivi des contributions et des progrès</li>
+                    <li>La communication entre les membres d'un groupe d'épargne</li>
+                    <li>Des outils d'analyse et de planification financière</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>3. Éligibilité et inscription</h2>
+                <p>Pour utiliser nos services, vous devez :</p>
+                <ul>
+                    <li>Être âgé d'au moins 18 ans ou avoir l'âge légal de la majorité dans votre juridiction</li>
+                    <li>Avoir la capacité juridique de conclure un contrat contraignant</li>
+                    <li>Résider dans un pays où nos services sont disponibles</li>
+                    <li>Fournir des informations exactes, complètes et à jour lors de l'inscription</li>
+                </ul>
+                <p>Vous êtes responsable de maintenir la confidentialité de vos informations de connexion et de toutes les activités qui se produisent sous votre compte.</p>
+            </div>
+            
+            <div class="section">
+                <h2>4. Obligations financières</h2>
+                <p>En utilisant notre Plateforme, vous acceptez les conditions financières suivantes :</p>
+                <ul>
+                    <li>Respecter vos engagements financiers envers votre groupe d'épargne</li>
+                    <li>Comprendre que CollabÉpargne n'est pas une institution financière et ne fournit pas de services bancaires réglementés</li>
+                    <li>Reconnaître que les fonds déposés sur la Plateforme sont gérés par nos partenaires financiers agréés</li>
+                    <li>Accepter les frais de service applicables, tels que détaillés dans notre grille tarifaire</li>
+                </ul>
+                <p>Les transactions effectuées via notre Plateforme sont soumises aux conditions de nos partenaires financiers et aux lois applicables.</p>
+            </div>
+            
+            <div class="section">
+                <h2>5. Règles d'utilisation</h2>
+                <p>Lors de l'utilisation de notre Plateforme, vous acceptez de :</p>
+                <ul>
+                    <li>Ne pas utiliser nos services à des fins illégales ou non autorisées</li>
+                    <li>Ne pas tenter d'accéder à des zones restreintes de la Plateforme</li>
+                    <li>Ne pas perturber ou interrompre l'intégrité ou les performances de la Plateforme</li>
+                    <li>Ne pas télécharger de contenu malveillant ou nuisible</li>
+                    <li>Respecter les autres utilisateurs et leur vie privée</li>
+                    <li>Ne pas usurper l'identité d'une autre personne ou entité</li>
+                    <li>Ne pas utiliser la Plateforme pour des activités de blanchiment d'argent ou de financement du terrorisme</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>6. Propriété intellectuelle</h2>
+                <p>Tous les droits de propriété intellectuelle relatifs à la Plateforme et à son contenu (textes, graphiques, logos, images, vidéos, etc.) appartiennent à CollabÉpargne ou à ses concédants de licence.</p>
+                <p>Vous ne pouvez pas copier, modifier, distribuer, vendre ou louer une partie de nos services ou logiciels inclus, ni procéder à de l'ingénierie inverse ou tenter d'extraire le code source de nos logiciels, sauf si les lois l'autorisent expressément.</p>
+            </div>
+            
+            <div class="section">
+                <h2>7. Confidentialité et données personnelles</h2>
+                <p>Notre traitement de vos données personnelles est régi par notre <a href="{{ path('app_potilique') }}">Politique de Confidentialité</a>, qui fait partie intégrante des présentes Conditions d'Utilisation.</p>
+                <p>En utilisant nos services, vous consentez à la collecte, l'utilisation et le partage de vos informations conformément à notre Politique de Confidentialité.</p>
+            </div>
+            
+            <div class="section">
+                <h2>8. Limitation de responsabilité</h2>
+                <p>Dans les limites autorisées par la loi :</p>
+                <ul>
+                    <li>CollabÉpargne fournit ses services "tels quels" et "selon disponibilité", sans garantie d'aucune sorte</li>
+                    <li>Nous ne garantissons pas que nos services seront ininterrompus, sécurisés ou exempts d'erreurs</li>
+                    <li>Nous ne sommes pas responsables des pertes financières résultant de l'utilisation de notre Plateforme, sauf en cas de faute grave ou intentionnelle de notre part</li>
+                    <li>Notre responsabilité maximale envers vous pour toute réclamation est limitée au montant que vous avez payé pour utiliser nos services au cours des 12 mois précédant l'événement donnant lieu à la réclamation</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>9. Résiliation</h2>
+                <p>Vous pouvez mettre fin à votre utilisation de nos services à tout moment en fermant votre compte, sous réserve du respect de vos engagements financiers en cours.</p>
+                <p>Nous pouvons suspendre ou résilier votre accès à nos services, avec ou sans préavis, pour toute raison valable, notamment en cas de violation des présentes Conditions d'Utilisation.</p>
+                <p>En cas de résiliation, certaines dispositions des présentes Conditions d'Utilisation resteront en vigueur, notamment celles concernant la propriété intellectuelle, la limitation de responsabilité et le règlement des litiges.</p>
+            </div>
+            
+            <div class="section">
+                <h2>10. Droit applicable et juridiction</h2>
+                <p>Les présentes Conditions d'Utilisation sont régies par le droit français.</p>
+                <p>En cas de litige, nous nous efforcerons de le résoudre à l'amiable. Si une résolution amiable n'est pas possible, les tribunaux de Paris, France, auront compétence exclusive, sauf disposition contraire du droit applicable.</p>
+            </div>
+            
+            <div class="section">
+                <h2>11. Dispositions diverses</h2>
+                <ul>
+                    <li><strong>Intégralité de l'accord</strong> : Ces Conditions d'Utilisation constituent l'intégralité de l'accord entre vous et CollabÉpargne concernant l'utilisation de nos services.</li>
+                    <li><strong>Divisibilité</strong> : Si une disposition des présentes Conditions d'Utilisation est jugée invalide ou inapplicable, les autres dispositions resteront en vigueur.</li>
+                    <li><strong>Non-renonciation</strong> : Le fait que CollabÉpargne n'exerce pas un droit ou une disposition des présentes Conditions ne constitue pas une renonciation à ce droit ou à cette disposition.</li>
+                    <li><strong>Cession</strong> : Vous ne pouvez pas céder vos droits ou obligations en vertu des présentes Conditions sans notre consentement préalable écrit.</li>
+                    <li><strong>Force majeure</strong> : CollabÉpargne ne sera pas responsable des retards ou défaillances résultant de causes indépendantes de sa volonté raisonnable.</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>12. Nous contacter</h2>
+                <p>Si vous avez des questions concernant ces Conditions d'Utilisation, veuillez nous contacter :</p>
+                <p>Par e-mail : contact@collabepargne.fr</p>
+                <p>Par courrier : CollabÉpargne, Service Juridique, 123 Avenue de la Finance, 75001 Paris, France</p>
+            </div>
+            
+            <div class="update-date">
+                <p>Dernière mise à jour : 3 avril 2025</p>
+            </div>
+            
+            <a href="{{ path('app_register') }}" class="btn btn-primary">Retour à l'inscription</a>
+        </div>
+    </main>
+
+{% include 'partials/footer.html.twig' %} {# Inclusion du footer #}
+{% endblock %}

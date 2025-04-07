@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - CollabÉpargne{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/registration.css') }}">
+{% endblock %}
+
+{% block body %}
+
+    {% include 'partials/header.html.twig' %} {# Inclusion du header #}
+
+    <main class="main-content">
+        <div class="signup-container">
+            <div class="signup-header">
+                <h1>Créer un compte</h1>
+                <p>Rejoignez la communauté CollabÉpargne et commencez à épargner collectivement.</p>
+            </div>
+
+            {% for flash_error in app.flashes('verify_email_error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+
+            {{ form_start(registrationForm, {'attr': {'class': 'signup-form'}}) }}
+
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form_label(registrationForm.prenom, 'Prénom') }}
+                        {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Votre prénom'}}) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(registrationForm.nom, 'Nom') }}
+                        {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom'}}) }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.email, 'Adresse e-mail') }}
+                    {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Votre adresse e-mail'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.telephone, 'Numéro de téléphone') }}
+                    {{ form_widget(registrationForm.telephone, {'attr': {'class': 'form-control', 'placeholder': 'Votre numéro de téléphone'}}) }}
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
+                    {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'id': 'password', 'placeholder': 'Votre mot de passe'}}) }}
+                    <p class="password-requirements">Le mot de passe doit contenir au moins 8 caractères.</p>
+                </div>
+
+                <div class="checkbox-group">
+                    {{ form_widget(registrationForm.agreeTerms) }}
+                    {{ form_label(registrationForm.agreeTerms, 'J’accepte les termes et conditions') }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">S'inscrire</button>
+
+            {{ form_end(registrationForm) }}
+
+            <p class="login-link">Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous</a></p>
+        </div>
+    </main>
+
+    {% include 'partials/footer.html.twig' %} {# Inclusion du footer #}
+
+{% endblock %}
+
+
+{% block javascripts %}
+    <script src="{{ asset('js/registration.js') }}"></script>
+{% endblock %}

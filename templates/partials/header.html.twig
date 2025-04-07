@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/registration.css') }}">
+{% endblock %}
+
+{% block body %}
+<header>
+        <nav>
+            <a href="{{ path('app_home') }}" class="logo">Collab<span>Épargne</span></a>
+            
+            <div class="buttons">
+                <a href="{{ path('app_login') }}" class="btn btn-secondary">Se connecter</a>
+                <a href="{{ path('app_register') }}" class="btn btn-primar">S'inscrire</a>
+            </div>
+        </nav>
+    </header>
+{% endblock %}    

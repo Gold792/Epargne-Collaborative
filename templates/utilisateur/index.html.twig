@@ -1,0 +1,268 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conditions d'utilisation - CollabÉpargne{% endblock %}
+
+{% block body %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/utilisateur.css') }}">
+{% endblock %}
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">Collab<span>Épargne</span></div>
+            <div class="user-info">
+                <img src="{{ asset('image/profile.png') }}" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <div class="user-name">Jean Dupont</div>
+                    <div class="user-status">Membre actif</div>
+                </div>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item active">
+                <span class="menu-icon">🏠</span>
+                <span><a href="{{ path('app_utilisateur') }}">Tableau de bord</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">➕</span>
+                <span>Créer une cotisation</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">👥</span>
+                <span>Mes cotisations</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">💰</span>
+                <span>Épargnes</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">💸</span>
+                <span>Effectuer un dépôt</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📊</span>
+                <span>Historique des contributions</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">🎯</span>
+                <span>Objectifs</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📅</span>
+                <span>Échéances</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">⚙️</span>
+                <span>Paramètres</span>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="sidebar-menu-item">
+                <span class="menu-icon">❓</span>
+                <span>Aide & Support</span>
+            </div>
+            <div class="sidebar-menu-item">
+                <span class="menu-icon">🚪</span>
+                <span><a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
+            <h1 class="page-title">Tableau de bord</h1>
+            <div class="action-buttons">
+                
+                <a href="{{ path('app_utilisateur') }}" class="btn btn-outline">
+                    <span class="btn-icon">🔄</span>
+                    Actualiser</a>
+                <button class="btn btn-primary">
+                    <span class="btn-icon">➕</span>
+                    Créer un groupe
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Action Buttons -->
+        <div class="mobile-actions" style="display: none;">
+            <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                <span class="btn-icon">➕</span>
+                Créer un groupe
+            </button>
+        </div>
+        
+        <!-- Dashboard Summary Cards -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Groupes actifs</div>
+                    </div>
+                    <div class="card-icon primary">👥</div>
+                </div>
+                <div class="card-value">3</div>
+                <div class="card-subtitle">Groupes d'épargne</div>
+                <div class="card-footer">
+                    <span class="trend-up">↑ 1 </span>
+                    <span>depuis le mois dernier</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Épargne totale</div>
+                    </div>
+                    <div class="card-icon success">💰</div>
+                </div>
+                <div class="card-value">2 450 €</div>
+                <div class="card-subtitle">Tous groupes confondus</div>
+                <div class="card-footer">
+                    <span class="trend-up">↑ 350 € </span>
+                    <span>depuis le mois dernier</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Prochain versement</div>
+                    </div>
+                    <div class="card-icon warning">📅</div>
+                </div>
+                <div class="card-value">150 €</div>
+                <div class="card-subtitle">Échéance: 15 avril 2025</div>
+                <div class="card-footer">
+                    <span>Dans 12 jours</span>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Progression objectif</div>
+                    </div>
+                    <div class="card-icon danger">🎯</div>
+                </div>
+                <div class="card-value">68%</div>
+                <div class="card-subtitle">Voyage à Bali - 3250€/4800€</div>
+                <div class="card-footer">
+                    <span class="trend-up">↑ 8% </span>
+                    <span>ce mois-ci</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mes groupes d'épargne -->
+        <div class="section-title">
+            <h2>Mes groupes d'épargne</h2>
+            <a href="#" class="view-all">Voir tous les groupes →</a>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom du groupe</th>
+                        <th>Membres</th>
+                        <th>Objectif</th>
+                        <th>Progression</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Voyage à Bali</td>
+                        <td>5 membres</td>
+                        <td>4 800 €</td>
+                        <td>3 250 € (68%)</td>
+                        <td><span class="status status-active">Actif</span></td>
+                        <td class="action-cell">
+                            <button class="action-btn">⚙️</button>
+                            <button class="action-btn">💰</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Fonds d'urgence</td>
+                        <td>2 membres</td>
+                        <td>2 000 €</td>
+                        <td>1 500 € (75%)</td>
+                        <td><span class="status status-active">Actif</span></td>
+                        <td class="action-cell">
+                            <button class="action-btn">⚙️</button>
+                            <button class="action-btn">💰</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Anniversaire Marie</td>
+                        <td>8 membres</td>
+                        <td>400 €</td>
+                        <td>400 € (100%)</td>
+                        <td><span class="status status-completed">Complété</span></td>
+                        <td class="action-cell">
+                            <button class="action-btn">⚙️</button>
+                            <button class="action-btn">💰</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Historique récent -->
+        <div class="section-title">
+            <h2>Activités récentes</h2>
+            <a href="#" class="view-all">Voir l'historique complet →</a>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Groupe</th>
+                        <th>Montant</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>01/04/2025</td>
+                        <td>Dépôt</td>
+                        <td>Voyage à Bali</td>
+                        <td>150 €</td>
+                        <td><span class="status status-completed">Confirmé</span></td>
+                    </tr>
+                    <tr>
+                        <td>23/03/2025</td>
+                        <td>Dépôt</td>
+                        <td>Fonds d'urgence</td>
+                        <td>200 €</td>
+                        <td><span class="status status-completed">Confirmé</span></td>
+                    </tr>
+                    <tr>
+                        <td>15/03/2025</td>
+                        <td>Dépôt</td>
+                        <td>Voyage à Bali</td>
+                        <td>150 €</td>
+                        <td><span class="status status-completed">Confirmé</span></td>
+                    </tr>
+                    <tr>
+                        <td>12/03/2025</td>
+                        <td>Création</td>
+                        <td>Fonds d'urgence</td>
+                        <td>—</td>
+                        <td><span class="status status-completed">Confirmé</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script src="{{ asset('js/utilisateur.js') }}"></script>
+{% endblock %}
