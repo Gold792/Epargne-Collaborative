@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Conditions d'utilisation - CollabÉpargne{% endblock %}
+{% block title %}User-CollabÉpargne{% endblock %}
 
 {% block body %}
 {% block stylesheets %}
@@ -26,7 +26,7 @@
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">➕</span>
-                <span>Créer une cotisation</span>
+                <span><a href="{{ path('app_creation_cotisation') }}" style="color: #fff; text-decoration: none;"> Créer une cotisation</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">👥</span>
@@ -82,7 +82,9 @@
                     Actualiser</a>
                 <button class="btn btn-primary">
                     <span class="btn-icon">➕</span>
+                    <a href="{{ path('app_creation_cotisation') }}" style="color: #fff; text-decoration: none;">
                     Créer une cotisation
+                    </a>
                 </button>
             </div>
         </div>

@@ -1,20 +1,255 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CreationCotisationController!{% endblock %}
+{% block title %}Créer une cotisation - CollabÉpargne{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/anydesk/Epargne/src/Controller/CreationCotisationController.php</code></li>
-        <li>Your template at <code>C:/Users/anydesk/Epargne/templates/creation_cotisation/index.html.twig</code></li>
-    </ul>
-</div>
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/cotisation.css') }}">
+{% endblock %}
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">Collab<span>Épargne</span></div>
+            <div class="user-info">
+                <img src="{{ asset('image/profile.png') }}" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <div class="user-name">Jean Dupont</div>
+                    <div class="user-status">Membre actif</div>
+                </div>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">🏠</span>
+                <span><a href="{{ path('app_utilisateur') }}">Tableau de bord</a></span>
+            </li>
+            <li class="sidebar-menu-item active">
+                <span class="menu-icon">➕</span>
+                <span>Créer une cotisation</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">👥</span>
+                <span>Mes cotisations</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">💰</span>
+                <span>Épargnes</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">💸</span>
+                <span>Effectuer un dépôt</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📊</span>
+                <span>Historique des contributions</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">🎯</span>
+                <span>Objectifs</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📅</span>
+                <span>Échéances</span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">⚙️</span>
+                <span>Paramètres</span>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="sidebar-menu-item">
+                <span class="menu-icon">❓</span>
+                <span>Aide & Support</span>
+            </div>
+            <div class="sidebar-menu-item">
+                <span class="menu-icon">🚪</span>
+                <span><a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
+            <h1 class="page-title">Créer une cotisation</h1>
+            <div class="action-buttons">
+                <a href="{{ path('app_utilisateur') }}" class="btn btn-outline">
+                    <span class="btn-icon">↩️</span>
+                    Retour au tableau de bord
+                </a>
+            </div>
+        </div>
+        
+        <!-- Form Container -->
+        <div class="form-container">
+            <form method="post" action="{{ path('app_creation_cotisation') }}" class="create-form">
+                <div class="form-section">
+                    <h2>Informations générales</h2>
+                    <div class="form-group">
+                        <label for="titre">Titre de la cotisation</label>
+                        <input type="text" id="titre" name="titre" required placeholder="Ex: Voyage à Bali, Cadeau d'anniversaire...">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="montantObjectif">Montant objectif (€)</label>
+                            <input type="number" id="montantObjectif" name="montantObjectif" min="1" required placeholder="Ex: 4800">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="montantEcheance">Montant par échéance (€)</label>
+                            <input type="number" id="montantEcheance" name="montantEcheance" min="1" required placeholder="Ex: 150">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2>Période de cotisation</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dateDebut">Date de début</label>
+                            <input type="date" id="dateDebut" name="dateDebut" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dateFin">Date de fin (optionnelle)</label>
+                            <input type="date" id="dateFin" name="dateFin">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="periodicite">Périodicité</label>
+                        <select id="periodicite" name="periodicite" required>
+                            <option value="hebdomadaire">Hebdomadaire</option>
+                            <option value="bimensuelle">Bimensuelle</option>
+                            <option value="mensuelle" selected>Mensuelle</option>
+                            <option value="trimestrielle">Trimestrielle</option>
+                            <option value="personnalisee">Personnalisée</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group custom-periodicity" style="display: none;">
+                        <label for="joursPeriodicite">Nombre de jours entre chaque échéance</label>
+                        <input type="number" id="joursPeriodicite" name="joursPeriodicite" min="1" placeholder="Ex: 15">
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2>Membres</h2>
+                    <div class="form-group">
+                        <label>Ajouter des membres (emails)</label>
+                        <div class="tag-input-container">
+                            <input type="text" id="memberEmail" placeholder="Entrez un email et appuyez sur Entrée">
+                            <div class="tags-container">
+                                <!-- Les tags seront ajoutés ici dynamiquement -->
+                            </div>
+                            <input type="hidden" id="membres" name="membres" value="">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h2>Options supplémentaires</h2>
+                    <div class="form-group checkbox">
+                        <input type="checkbox" id="rappelAuto" name="rappelAuto" checked>
+                        <label for="rappelAuto">Activer les rappels automatiques</label>
+                    </div>
+                    
+                    <div class="form-group checkbox">
+                        <input type="checkbox" id="cotisationPublique" name="cotisationPublique">
+                        <label for="cotisationPublique">Rendre cette cotisation publique</label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description (optionnelle)</label>
+                        <textarea id="description" name="description" rows="4" placeholder="Décrivez l'objectif de cette cotisation..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="history.back()">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-icon">✓</span>
+                        Créer la cotisation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+        
+        // Show/hide custom periodicity based on select
+        document.getElementById('periodicite').addEventListener('change', function() {
+            const customPeriodicity = document.querySelector('.custom-periodicity');
+            if (this.value === 'personnalisee') {
+                customPeriodicity.style.display = 'block';
+            } else {
+                customPeriodicity.style.display = 'none';
+            }
+        });
+        
+        // Handle tag input for members
+        const tagInput = document.getElementById('memberEmail');
+        const tagsContainer = document.querySelector('.tags-container');
+        const membresInput = document.getElementById('membres');
+        let membres = [];
+        
+        tagInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                
+                const email = this.value.trim();
+                if (email && isValidEmail(email) && !membres.includes(email)) {
+                    membres.push(email);
+                    updateTags();
+                    updateMembresInput();
+                    this.value = '';
+                } else if (email && !isValidEmail(email)) {
+                    alert('Veuillez entrer une adresse email valide.');
+                }
+            }
+        });
+        
+        function updateTags() {
+            tagsContainer.innerHTML = '';
+            membres.forEach(email => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `
+                    <span>${email}</span>
+                    <span class="tag-remove" data-email="${email}">×</span>
+                `;
+                tagsContainer.appendChild(tag);
+            });
+            
+            // Add event listeners to remove buttons
+            document.querySelectorAll('.tag-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const emailToRemove = this.getAttribute('data-email');
+                    membres = membres.filter(email => email !== emailToRemove);
+                    updateTags();
+                    updateMembresInput();
+                });
+            });
+        }
+        
+        function updateMembresInput() {
+            membresInput.value = JSON.stringify(membres);
+        }
+        
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+    </script>
+    
+    
 {% endblock %}
