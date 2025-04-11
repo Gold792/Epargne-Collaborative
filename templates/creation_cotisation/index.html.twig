@@ -13,7 +13,7 @@
             <div class="user-info">
                 <img src="{{ asset('image/profile.png') }}" alt="User" class="user-avatar">
                 <div class="user-details">
-                    <div class="user-name">Jean Dupont</div>
+                    <div class="user-name">{{ app.user.nom }} {{ app.user.prenom }}</div>
                     <div class="user-status">Membre actif</div>
                 </div>
             </div>
@@ -26,43 +26,27 @@
             </li>
             <li class="sidebar-menu-item active">
                 <span class="menu-icon">➕</span>
-                <span>Créer une cotisation</span>
+                <span><a href="{{ path('app_creation_cotisation') }}" style="color: #fff; text-decoration: none;">Créer une cotisation</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">👥</span>
-                <span>Mes cotisations</span>
+                <span><a href="#" style="color: #fff; text-decoration: none;">Mes cotisations</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">💰</span>
-                <span>Épargnes</span>
-            </li>
-            <li class="sidebar-menu-item">
-                <span class="menu-icon">💸</span>
-                <span>Effectuer un dépôt</span>
+                <span><a href="#" style="color: #fff; text-decoration: none;">Mes épargnes</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">📊</span>
-                <span>Historique des contributions</span>
-            </li>
-            <li class="sidebar-menu-item">
-                <span class="menu-icon">🎯</span>
-                <span>Objectifs</span>
+                <span><a href="#" style="color: #fff; text-decoration: none;">Historique des contributions</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">📅</span>
-                <span>Échéances</span>
-            </li>
-            <li class="sidebar-menu-item">
-                <span class="menu-icon">⚙️</span>
-                <span>Paramètres</span>
+                <span><a href="{{ path('app_echeance') }}" style="color: #fff; text-decoration: none;">Échéances</a></span>
             </li>
         </ul>
         
         <div class="sidebar-footer">
-            <div class="sidebar-menu-item">
-                <span class="menu-icon">❓</span>
-                <span>Aide & Support</span>
-            </div>
             <div class="sidebar-menu-item">
                 <span class="menu-icon">🚪</span>
                 <span><a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a></span>
@@ -83,6 +67,16 @@
             </div>
         </div>
         
+        <!-- Mobile Action Buttons -->
+        <div class="mobile-actions" style="display: none;">
+            <a href="{{ path('app_utilisateur') }}" style="width: 100%; text-decoration: none;">
+                <button class="btn btn-outline" style="width: 100%; margin-bottom: 1rem;">
+                    <span class="btn-icon">↩️</span>
+                    Retour au tableau de bord
+                </button>
+            </a>
+        </div>
+        
         <!-- Form Container -->
         <div class="form-container">
             <form method="post" action="{{ path('app_creation_cotisation') }}" class="create-form">
@@ -90,18 +84,23 @@
                     <h2>Informations générales</h2>
                     <div class="form-group">
                         <label for="titre">Titre de la cotisation</label>
-                        <input type="text" id="titre" name="titre" required placeholder="Ex: Voyage à Bali, Cadeau d'anniversaire...">
+                        <input type="text" id="titre" name="titre" required placeholder="Ex: Voyage au Maroc, Cadeau d'anniversaire...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="initiateur">Nom de l'initiateur du projet</label>
+                        <input type="text" id="initiateur" name="initiateur" required placeholder="Ex: Jean Dupont">
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="montantObjectif">Montant objectif (€)</label>
-                            <input type="number" id="montantObjectif" name="montantObjectif" min="1" required placeholder="Ex: 4800">
+                            <label for="montantObjectif">Montant objectif (FCFA)</label>
+                            <input type="number" id="montantObjectif" name="montantObjectif" min="1" required placeholder="Ex: 500000">
                         </div>
                         
                         <div class="form-group">
-                            <label for="montantEcheance">Montant par échéance (€)</label>
-                            <input type="number" id="montantEcheance" name="montantEcheance" min="1" required placeholder="Ex: 150">
+                            <label for="montantEcheance">Montant par échéance (FCFA)</label>
+                            <input type="number" id="montantEcheance" name="montantEcheance" min="1" required placeholder="Ex: 25000">
                         </div>
                     </div>
                 </div>
@@ -124,7 +123,6 @@
                         <label for="periodicite">Périodicité</label>
                         <select id="periodicite" name="periodicite" required>
                             <option value="hebdomadaire">Hebdomadaire</option>
-                            <option value="bimensuelle">Bimensuelle</option>
                             <option value="mensuelle" selected>Mensuelle</option>
                             <option value="trimestrielle">Trimestrielle</option>
                             <option value="personnalisee">Personnalisée</option>
@@ -140,13 +138,41 @@
                 <div class="form-section">
                     <h2>Membres</h2>
                     <div class="form-group">
-                        <label>Ajouter des membres (emails)</label>
+                        <label for="searchMember">Rechercher un membre</label>
+                        <div class="search-input-container">
+                            <input type="text" id="searchMember" placeholder="Nom, prénom ou numéro de téléphone">
+                            <button type="button" class="search-btn">🔍</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Membres sélectionnés</label>
                         <div class="tag-input-container">
-                            <input type="text" id="memberEmail" placeholder="Entrez un email et appuyez sur Entrée">
                             <div class="tags-container">
                                 <!-- Les tags seront ajoutés ici dynamiquement -->
                             </div>
                             <input type="hidden" id="membres" name="membres" value="">
+                        </div>
+                    </div>
+                    
+                    <div class="members-list-container">
+                        <h3>Membres disponibles</h3>
+                        <div class="members-list">
+                            {% if utilisateurs is defined and utilisateurs|length > 0 %}
+                                {% for utilisateur in utilisateurs %}
+                                    <div class="member-item" data-id="{{ utilisateur.id }}" data-nom="{{ utilisateur.nom }}" data-prenom="{{ utilisateur.prenom }}" data-telephone="{{ utilisateur.telephone }}">
+                                        <div class="member-info">
+                                            <div class="member-name">{{ utilisateur.nom }} {{ utilisateur.prenom }}</div>
+                                            <div class="member-phone">{{ utilisateur.telephone }}</div>
+                                        </div>
+                                        <button type="button" class="add-member-btn">+</button>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="empty-members">
+                                    <p>Aucun autre membre n'est disponible</p>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -170,7 +196,7 @@
                 </div>
                 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-outline" onclick="history.back()">Annuler</button>
+                    <button type="button" class="btn btn-outline" onclick="location.href='{{ path('app_utilisateur') }}'">Annuler</button>
                     <button type="submit" class="btn btn-primary">
                         <span class="btn-icon">✓</span>
                         Créer la cotisation
@@ -196,36 +222,81 @@
             }
         });
         
-        // Handle tag input for members
-        const tagInput = document.getElementById('memberEmail');
-        const tagsContainer = document.querySelector('.tags-container');
-        const membresInput = document.getElementById('membres');
-        let membres = [];
-        
-        tagInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ',') {
-                e.preventDefault();
-                
-                const email = this.value.trim();
-                if (email && isValidEmail(email) && !membres.includes(email)) {
-                    membres.push(email);
-                    updateTags();
-                    updateMembresInput();
-                    this.value = '';
-                } else if (email && !isValidEmail(email)) {
-                    alert('Veuillez entrer une adresse email valide.');
-                }
+        // Mobile detection for responsive UI
+        function checkMobile() {
+            if (window.innerWidth <= 768) {
+                document.querySelector('.mobile-actions').style.display = 'block';
+                document.querySelector('.action-buttons').style.display = 'none';
+            } else {
+                document.querySelector('.mobile-actions').style.display = 'none';
+                document.querySelector('.action-buttons').style.display = 'flex';
             }
+        }
+        
+        // Check on load and resize
+        window.addEventListener('load', checkMobile);
+        window.addEventListener('resize', checkMobile);
+        
+        // Handle members selection
+        const membresInput = document.getElementById('membres');
+        const tagsContainer = document.querySelector('.tags-container');
+        const searchInput = document.getElementById('searchMember');
+        const membersList = document.querySelector('.members-list');
+        const memberItems = document.querySelectorAll('.member-item');
+        
+        let selectedMembers = [];
+        
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            memberItems.forEach(item => {
+                const nom = item.dataset.nom.toLowerCase();
+                const prenom = item.dataset.prenom.toLowerCase();
+                const telephone = item.dataset.telephone.toLowerCase();
+                
+                if (nom.includes(searchTerm) || prenom.includes(searchTerm) || telephone.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
         });
         
-        function updateTags() {
+        // Add member to selected list
+        document.querySelectorAll('.add-member-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const memberItem = this.closest('.member-item');
+                const memberId = memberItem.dataset.id;
+                const memberName = `${memberItem.dataset.prenom} ${memberItem.dataset.nom}`;
+                const memberPhone = memberItem.dataset.telephone;
+                
+                if (!selectedMembers.some(member => member.id === memberId)) {
+                    selectedMembers.push({
+                        id: memberId,
+                        name: memberName,
+                        phone: memberPhone
+                    });
+                    
+                    updateSelectedMembers();
+                    updateMembresInput();
+                    
+                    // Hide from list or disable button
+                    this.disabled = true;
+                    this.textContent = '✓';
+                }
+            });
+        });
+        
+        function updateSelectedMembers() {
             tagsContainer.innerHTML = '';
-            membres.forEach(email => {
+            
+            selectedMembers.forEach(member => {
                 const tag = document.createElement('div');
                 tag.className = 'tag';
                 tag.innerHTML = `
-                    <span>${email}</span>
-                    <span class="tag-remove" data-email="${email}">×</span>
+                    <span>${member.name} (${member.phone})</span>
+                    <span class="tag-remove" data-id="${member.id}">×</span>
                 `;
                 tagsContainer.appendChild(tag);
             });
@@ -233,23 +304,29 @@
             // Add event listeners to remove buttons
             document.querySelectorAll('.tag-remove').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const emailToRemove = this.getAttribute('data-email');
-                    membres = membres.filter(email => email !== emailToRemove);
-                    updateTags();
+                    const idToRemove = this.getAttribute('data-id');
+                    
+                    // Remove from selected members
+                    selectedMembers = selectedMembers.filter(member => member.id !== idToRemove);
+                    
+                    // Update UI
+                    updateSelectedMembers();
                     updateMembresInput();
+                    
+                    // Re-enable button in list
+                    const memberBtn = document.querySelector(`.member-item[data-id="${idToRemove}"] .add-member-btn`);
+                    if (memberBtn) {
+                        memberBtn.disabled = false;
+                        memberBtn.textContent = '+';
+                    }
                 });
             });
         }
         
         function updateMembresInput() {
-            membresInput.value = JSON.stringify(membres);
-        }
-        
-        function isValidEmail(email) {
-            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return re.test(email);
+            // Just store member IDs for form submission
+            const memberIds = selectedMembers.map(member => member.id);
+            membresInput.value = JSON.stringify(memberIds);
         }
     </script>
-    
-    
 {% endblock %}

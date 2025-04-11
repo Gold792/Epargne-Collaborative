@@ -1,0 +1,677 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {% if cotisation is defined %}
+{{ cotisation.titre }} - CollabÉpargne
+    {% else %}
+        Cotisation - CollabÉpargne
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/cotisation.css') }}">
+{% endblock %}
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">Collab<span>Épargne</span></div>
+            <div class="user-info">
+                <img src="{{ asset('image/profile.png') }}" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <div class="user-name">{{ app.user.nom }} {{ app.user.prenom }}</div>
+                    <div class="cotisation-title">{{ cotisation.titre }}</div>
+                    <div class="user-status">Membre actif</div>
+                </div>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">🏠</span>
+                <span><a href="{{ path('app_utilisateur') }}">Tableau de bord</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">➕</span>
+                <span><a href="{{ path('app_creation_cotisation') }}">Créer une cotisation</a></span>
+            </li>
+            <li class="sidebar-menu-item active">
+                <span class="menu-icon">👥</span>
+                <span><a href="#" style="color: #fff; text-decoration: none;">Mes cotisations</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">💰</span>
+                <span><a href="#" style="color: #fff; text-decoration: none;">Mes épargnes</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📊</span>
+                <span><a href="#" style="color: #fff; text-decoration: none;">Historique des contributions</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📅</span>
+                <span><a href="{{ path('app_echeance') }}" style="color: #fff; text-decoration: none;">Échéances</a></span>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="sidebar-menu-item">
+                <span class="menu-icon">🚪</span>
+                <span><a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
+            <h1 class="page-title">
+                {% if cotisation is defined %}
+{{ cotisation.titre }}
+                {% else %}
+                    Informations sur la cotisation
+                {% endif %}
+</h1>
+            <div class="action-buttons">
+                <a href="{{ path('app_utilisateur') }}" class="btn btn-outline">
+                    <span class="btn-icon">↩️</span>
+                    Retour au tableau de bord
+                </a>
+            </div>
+        </div>
+        
+        <!-- Mobile Action Buttons -->
+        <div class="mobile-actions" style="display: none;">
+            <a href="{{ path('app_utilisateur') }}" style="width: 100%; text-decoration: none;">
+                <button class="btn btn-outline" style="width: 100%; margin-bottom: 1rem;">
+                    <span class="btn-icon">↩️</span>
+                    Retour au tableau de bord
+                </button>
+            </a>
+        </div>
+        
+        <!-- Informations sur la cotisation -->
+{% if cotisation is defined %}
+        <div class="form-container">
+            <div class="cotisation-info">
+                <div class="info-row">
+                    <div class="info-item">
+                        <span class="info-label">Initiateur</span>
+                        <span class="info-value">{{ cotisation.initiateur }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Date de début</span>
+                        <span class="info-value">{{ cotisation.dateDebut|date('d/m/Y') }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Date de fin</span>
+                        <span class="info-value">
+{% if cotisation.dateFin %}
+{{ cotisation.dateFin|date('d/m/Y') }}
+{% else %}
+Non définie
+{% endif %}
+</span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-item">
+                        <span class="info-label">Périodicité</span>
+                        <span class="info-value">{{ cotisation.periodicite|capitalize }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Montant par échéance</span>
+                        <span class="info-value">{{ cotisation.montantEcheance|number_format(0, ',', ' ') }} FCFA</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Rappels automatiques</span>
+                        <span class="info-value">{% if cotisation.rappelAuto %}Activés{% else %}Désactivés{% endif %}</span>
+                    </div>
+                </div>
+                
+                <!-- Barre de progression -->
+                <div class="progress-container">
+                    <div class="progress-info">
+                        <span>Progression: {{ progression }}%</span>
+                        <span>{{ montantActuel|number_format(0, ',', ' ') }} / {{ cotisation.montantObjectif|number_format(0, ',', ' ') }} FCFA</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-value" style="width: {{ progression }}%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Onglets -->
+            <div class="tabs-container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="membres">Membres</button>
+                    <button class="tab-btn" data-tab="echeances">Échéances</button>
+                    <button class="tab-btn" data-tab="historique">Historique des paiements</button>
+                </div>
+                
+                <!-- Onglet Membres -->
+                <div class="tab-content active" id="membres">
+                    <div class="section-header">
+                        <h2>Membres de la cotisation</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" id="ajouter-membre-btn">
+                                <span class="btn-icon">➕</span>
+                                Ajouter des membres
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="members-table-container">
+                        <table class="members-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Téléphone</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if membres is defined and membres|length > 0 %}
+                                    {% for membre in membres %}
+                                        <tr>
+                                            <td>{{ membre.nom }}</td>
+                                            <td>{{ membre.prenom }}</td>
+                                            <td>{{ membre.telephone }}</td>
+                                            <td>
+                                                <span class="status-badge {% if membre.statut == 'actif' %}status-paid{% else %}status-pending{% endif %}">
+                                                    {{ membre.statut|capitalize }}
+                                                </span>
+                                            </td>
+                                            <td class="actions-cell">
+                                                <button class="btn btn-sm btn-outline action-btn" title="Envoyer un rappel">📩</button>
+                                                <button class="btn btn-sm btn-danger action-btn retirer-membre-btn" data-id="{{ membre.id }}" title="Retirer de la cotisation">❌</button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="no-data">Aucun membre n'a encore rejoint cette cotisation</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Onglet Échéances -->
+                <div class="tab-content" id="echeances">
+                    <div class="section-header">
+                        <h2>Calendrier des échéances</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" id="ajouter-echeance-btn">
+                                <span class="btn-icon">📅</span>
+                                Définir une nouvelle échéance
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <table class="echeances-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                                <th>Membres payés</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if echeances is defined and echeances|length > 0 %}
+                                {% for echeance in echeances %}
+                                    <tr>
+                                        <td>{{ echeance.date|date('d/m/Y') }}</td>
+                                        <td>{{ echeance.montant|number_format(0, ',', ' ') }} FCFA</td>
+                                        <td>
+                                            <span class="status-badge {% if echeance.statut == 'complété' %}status-paid{% else %}status-pending{% endif %}">
+                                                {{ echeance.statut|capitalize }}
+                                            </span>
+                                        </td>
+                                        <td>{{ echeance.membresPayes }} / {{ echeance.totalMembres }}</td>
+                                        <td class="actions-cell">
+                                            <button class="btn btn-sm btn-outline action-btn voir-details-btn" data-id="{{ echeance.id }}">
+                                                👁️ Détails
+                                            </button>
+                                            <button class="btn btn-sm btn-primary action-btn rappel-echeance-btn" data-id="{{ echeance.id }}">
+                                                📩 Rappel
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="no-data">Aucune échéance n'est programmée</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Onglet Historique des paiements -->
+                <div class="tab-content" id="historique">
+                    <div class="section-header">
+                        <h2>Historique des paiements</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-outline" id="exporter-btn">
+                                <span class="btn-icon">📥</span>
+                                Exporter
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <table class="echeances-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Membre</th>
+                                <th>Montant</th>
+                                <th>Échéance</th>
+                                <th>Méthode</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if paiements is defined and paiements|length > 0 %}
+                                {% for paiement in paiements %}
+                                    <tr>
+                                        <td>{{ paiement.date|date('d/m/Y H:i') }}</td>
+                                        <td>{{ paiement.membre.prenom }} {{ paiement.membre.nom }}</td>
+                                        <td>{{ paiement.montant|number_format(0, ',', ' ') }} FCFA</td>
+                                        <td>{{ paiement.echeance.date|date('d/m/Y') }}</td>
+                                        <td>{{ paiement.methode|capitalize }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="no-data">Aucun paiement enregistré pour le moment</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+{% else %}
+            <p class="error-message">Aucune information sur la cotisation n'est disponible.</p>
+        {% endif %}
+    </div>
+    
+    <!-- Modal Ajouter Membres -->
+    <div class="modal" id="ajouter-membre-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter des membres</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="searchMemberModal">Rechercher un membre</label>
+                    <div class="search-input-container">
+                        <input type="text" id="searchMemberModal" placeholder="Nom, prénom ou numéro de téléphone">
+                        <button type="button" class="search-btn">🔍</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Membres sélectionnés</label>
+                    <div class="tag-input-container">
+                        <div class="tags-container-modal">
+                            <!-- Les tags seront ajoutés ici dynamiquement -->
+                        </div>
+                        <input type="hidden" id="membresModal" value="">
+                    </div>
+                </div>
+                
+                <div class="members-list-container">
+                    <h3>Membres disponibles</h3>
+                    <div class="members-list">
+                        {% if utilisateursDisponibles is defined and utilisateursDisponibles|length > 0 %}
+                            {% for utilisateur in utilisateursDisponibles %}
+                                <div class="member-item" data-id="{{ utilisateur.id }}" data-nom="{{ utilisateur.nom }}" data-prenom="{{ utilisateur.prenom }}" data-telephone="{{ utilisateur.telephone }}">
+                                    <div class="member-info">
+                                        <div class="member-name">{{ utilisateur.nom }} {{ utilisateur.prenom }}</div>
+                                        <div class="member-phone">{{ utilisateur.telephone }}</div>
+                                    </div>
+                                    <button type="button" class="add-member-btn">+</button>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-members">
+                                <p>Aucun autre membre n'est disponible</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancel-add-membres">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="confirm-add-membres">
+                        <span class="btn-icon">✓</span>
+                        Ajouter à la cotisation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Confirmer retrait -->
+    <div class="modal" id="confirmer-retrait-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirmer le retrait</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir retirer ce membre de la cotisation ?</p>
+                <p>Cette action est irréversible.</p>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="cancel-retrait">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirm-retrait">
+                        <span class="btn-icon">✓</span>
+                        Confirmer le retrait
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Détails échéance -->
+    <div class="modal" id="details-echeance-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Détails de l'échéance</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="echeance-details">
+                    <div class="info-row">
+                        <div class="info-item">
+                            <span class="info-label">Date</span>
+                            <span class="info-value echeance-date">--/--/----</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Montant</span>
+                            <span class="info-value echeance-montant">-- FCFA</span>
+                        </div>
+                    </div>
+                    
+                    <h3>Statut des paiements</h3>
+                    <div class="members-table-container">
+                        <table class="members-table">
+                            <thead>
+                                <tr>
+                                    <th>Membre</th>
+                                    <th>Statut</th>
+                                    <th>Date de paiement</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="echeance-membres-liste">
+                                <!-- Contenu chargé dynamiquement -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" id="fermer-details">Fermer</button>
+                    <button type="button" class="btn btn-primary" id="marquer-paye">
+                        <span class="btn-icon">✓</span>
+                        Marquer tout comme payé
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Toggle sidebar sur mobile
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+        
+        // Gestion des onglets
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                // Réinitialiser tous les onglets
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Activer l'onglet sélectionné
+                button.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Gestion des modaux
+        const modals = document.querySelectorAll('.modal');
+        const closeButtons = document.querySelectorAll('.close-modal');
+        
+        // Ouvrir modal d'ajout de membres
+        document.getElementById('ajouter-membre-btn').addEventListener('click', function() {
+            document.getElementById('ajouter-membre-modal').style.display = 'flex';
+        });
+        
+        // Fermer modaux via boutons de fermeture
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const modal = this.closest('.modal');
+                modal.style.display = 'none';
+            });
+        });
+        
+        // Fermer modaux si on clique en dehors
+        window.addEventListener('click', function(event) {
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // Gestion des boutons annuler dans les modaux
+        document.getElementById('cancel-add-membres').addEventListener('click', function() {
+            document.getElementById('ajouter-membre-modal').style.display = 'none';
+        });
+        
+        document.getElementById('cancel-retrait').addEventListener('click', function() {
+            document.getElementById('confirmer-retrait-modal').style.display = 'none';
+        });
+        
+        document.getElementById('fermer-details').addEventListener('click', function() {
+            document.getElementById('details-echeance-modal').style.display = 'none';
+        });
+        
+        // Mobile detection pour UI responsive
+        function checkMobile() {
+            if (window.innerWidth <= 768) {
+                document.querySelector('.mobile-actions').style.display = 'block';
+                document.querySelector('.action-buttons').style.display = 'none';
+            } else {
+                document.querySelector('.mobile-actions').style.display = 'none';
+                document.querySelector('.action-buttons').style.display = 'flex';
+            }
+        }
+        
+        // Vérifier au chargement et au redimensionnement
+        window.addEventListener('load', checkMobile);
+        window.addEventListener('resize', checkMobile);
+        
+        // Gestion de la sélection des membres dans le modal
+        const membresModalInput = document.getElementById('membresModal');
+        const tagsContainerModal = document.querySelector('.tags-container-modal');
+        const searchInputModal = document.getElementById('searchMemberModal');
+        const memberItemsModal = document.querySelectorAll('#ajouter-membre-modal .member-item');
+        
+        let selectedMembersModal = [];
+        
+        // Fonctionnalité de recherche dans le modal
+        searchInputModal.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            memberItemsModal.forEach(item => {
+                const nom = item.dataset.nom.toLowerCase();
+                const prenom = item.dataset.prenom.toLowerCase();
+                const telephone = item.dataset.telephone.toLowerCase();
+                
+                if (nom.includes(searchTerm) || prenom.includes(searchTerm) || telephone.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        // Ajouter membre à la liste sélectionnée dans le modal
+        document.querySelectorAll('#ajouter-membre-modal .add-member-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const memberItem = this.closest('.member-item');
+                const memberId = memberItem.dataset.id;
+                const memberName = `${memberItem.dataset.prenom} ${memberItem.dataset.nom}`;
+                const memberPhone = memberItem.dataset.telephone;
+                
+                if (!selectedMembersModal.some(member => member.id === memberId)) {
+                    selectedMembersModal.push({
+                        id: memberId,
+                        name: memberName,
+                        phone: memberPhone
+                    });
+                    
+                    updateSelectedMembersModal();
+                    updateMembresModalInput();
+                    
+                    // Désactiver le bouton
+                    this.disabled = true;
+                    this.textContent = '✓';
+                }
+            });
+        });
+        
+        function updateSelectedMembersModal() {
+            tagsContainerModal.innerHTML = '';
+            
+            selectedMembersModal.forEach(member => {
+                const tag = document.createElement('div');
+                tag.className = 'tag';
+                tag.innerHTML = `
+                    <span>${member.name} (${member.phone})</span>
+                    <span class="tag-remove" data-id="${member.id}">×</span>
+                `;
+                tagsContainerModal.appendChild(tag);
+            });
+            
+            // Ajouter des écouteurs d'événements aux boutons de suppression
+            document.querySelectorAll('#ajouter-membre-modal .tag-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idToRemove = this.getAttribute('data-id');
+                    
+                    // Supprimer de la liste des membres sélectionnés
+                    selectedMembersModal = selectedMembersModal.filter(member => member.id !== idToRemove);
+                    
+                    // Mettre à jour l'interface
+                    updateSelectedMembersModal();
+                    updateMembresModalInput();
+                    
+                    // Réactiver le bouton dans la liste
+                    const memberBtn = document.querySelector(`#ajouter-membre-modal .member-item[data-id="${idToRemove}"] .add-member-btn`);
+                    if (memberBtn) {
+                        memberBtn.disabled = false;
+                        memberBtn.textContent = '+';
+                    }
+                });
+            });
+        }
+        
+        function updateMembresModalInput() {
+            // Stocker uniquement les ID des membres pour la soumission du formulaire
+            const memberIds = selectedMembersModal.map(member => member.id);
+            membresModalInput.value = JSON.stringify(memberIds);
+        }
+        
+        // Gestion de la confirmation d'ajout des membres
+        document.getElementById('confirm-add-membres').addEventListener('click', function() {
+            if (selectedMembersModal.length === 0) {
+                alert('Veuillez sélectionner au moins un membre à ajouter.');
+                return;
+            }
+            
+            // Ici, vous enverriez normalement une requête AJAX pour ajouter les membres
+            // puis rafraîchiriez la liste des membres dans l'onglet
+            
+            // Pour simuler, affichons juste un message
+            alert(`${selectedMembersModal.length} membre(s) ajouté(s) avec succès.`);
+            document.getElementById('ajouter-membre-modal').style.display = 'none';
+        });
+        
+        // Gestion du bouton retirer membre
+        document.querySelectorAll('.retirer-membre-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const membreId = this.getAttribute('data-id');
+                // Stocker temporairement l'ID pour la confirmation
+                document.getElementById('confirm-retrait').setAttribute('data-id', membreId);
+                document.getElementById('confirmer-retrait-modal').style.display = 'flex';
+            });
+        });
+        
+        // Confirmation du retrait d'un membre
+        document.getElementById('confirm-retrait').addEventListener('click', function() {
+            const membreId = this.getAttribute('data-id');
+            
+            // Ici, vous enverriez normalement une requête AJAX pour retirer le membre
+            // puis rafraîchiriez la liste des membres
+            
+            // Pour simuler, affichons juste un message
+            alert('Membre retiré avec succès.');
+            document.getElementById('confirmer-retrait-modal').style.display = 'none';
+        });
+        
+        // Gérer l'affichage des détails d'une échéance
+        document.querySelectorAll('.voir-details-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const echeanceId = this.getAttribute('data-id');
+                
+                // Dans une application réelle, vous feriez une requête AJAX pour obtenir les détails
+                // Ici, nous simulons le chargement des détails
+                
+                // Mettre à jour les informations dans le modal
+                document.querySelector('.echeance-date').textContent = '15/05/2025'; // Exemple
+                document.querySelector('.echeance-montant').textContent = '25 000 FCFA'; // Exemple
+                
+                // Charger la liste des membres et leur statut de paiement
+                document.getElementById('echeance-membres-liste').innerHTML = `
+                    <tr>
+                        <td>Jean Dupont</td>
+                        <td><span class="status-badge status-paid">Payé</span></td>
+                        <td>12/05/2025</td>
+                        <td class="actions-cell">
+                            <button class="btn btn-sm btn-outline action-btn">📝</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Marie Martin</td>
+                        <td><span class="status-badge status-pending">En attente</span></td>
+                        <td>-</td>
+                        <td class="actions-cell">
+                            <button class="btn btn-sm btn-primary action-btn">✓</button>
+                            <button class="btn btn-sm btn-outline action-btn">📩</button>
+                        </td>
+                    </tr>
+                `;
+                
+                // Afficher le modal
+                document.getElementById('details-echeance-modal').style.display = 'flex';
+            });
+        });
+    </script>
+{% endblock %}

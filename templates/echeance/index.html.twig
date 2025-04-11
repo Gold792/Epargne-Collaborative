@@ -1,10 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Échéances - CollabÉpargne{% endblock %}
+{% block title %}Gestion des échéances - CollabÉpargne{% endblock %}
 
 {% block body %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('css/echeance.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/cotisation.css') }}">
 {% endblock %}
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -13,7 +13,7 @@
             <div class="user-info">
                 <img src="{{ asset('image/profile.png') }}" alt="User" class="user-avatar">
                 <div class="user-details">
-                    <div class="user-name">Jean Dupont</div>
+                    <div class="user-name">{{ app.user.nom }} {{ app.user.prenom }}</div>
                     <div class="user-status">Membre actif</div>
                 </div>
             </div>
@@ -26,43 +26,27 @@
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">➕</span>
-                <span>Créer une cotisation</span>
+                <span><a href="{{ path('app_creation_cotisation') }}" style="color: #fff; text-decoration: none;">Créer une cotisation</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">👥</span>
-                <span>Mes cotisations</span>
+                <span><a href="#" style="color: #fff; text-decoration: none;">Mes cotisations</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">💰</span>
-                <span>Épargnes</span>
-            </li>
-            <li class="sidebar-menu-item">
-                <span class="menu-icon">💸</span>
-                <span>Effectuer un dépôt</span>
+                <span><a href="#" style="color: #fff; text-decoration: none;">Mes épargnes</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">📊</span>
-                <span>Historique des contributions</span>
-            </li>
-            <li class="sidebar-menu-item">
-                <span class="menu-icon">🎯</span>
-                <span>Objectifs</span>
+                <span><a href="#" style="color: #fff; text-decoration: none;">Historique des contributions</a></span>
             </li>
             <li class="sidebar-menu-item active">
                 <span class="menu-icon">📅</span>
-                <span>Échéances</span>
-            </li>
-            <li class="sidebar-menu-item">
-                <span class="menu-icon">⚙️</span>
-                <span>Paramètres</span>
+                <span><a href="{{ path('app_echeance') }}" style="color: #fff; text-decoration: none;">Échéances</a></span>
             </li>
         </ul>
         
         <div class="sidebar-footer">
-            <div class="sidebar-menu-item">
-                <span class="menu-icon">❓</span>
-                <span>Aide & Support</span>
-            </div>
             <div class="sidebar-menu-item">
                 <span class="menu-icon">🚪</span>
                 <span><a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a></span>
@@ -76,306 +60,273 @@
             <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
             <h1 class="page-title">Gestion des échéances</h1>
             <div class="action-buttons">
-                <a href="#" class="btn btn-outline calendar-toggle">
-                    <span class="btn-icon">📆</span>
-                    Vue calendrier
-                </a>
-                <a href="#" class="btn btn-primary" id="effectuerPaiementBtn">
-                    <span class="btn-icon">💳</span>
-                    Effectuer un paiement
+                <a href="{{ path('app_utilisateur') }}" class="btn btn-outline">
+                    <span class="btn-icon">↩️</span>
+                    Retour au tableau de bord
                 </a>
             </div>
         </div>
         
         <!-- Mobile Action Buttons -->
         <div class="mobile-actions" style="display: none;">
-            <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
-                <span class="btn-icon">💳</span>
-                Effectuer un paiement
-            </button>
-        </div>
-        
-        <!-- Échéances status cards -->
-        <div class="dashboard-grid">
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Échéances à venir</div>
-                    </div>
-                    <div class="card-icon warning">📅</div>
-                </div>
-                <div class="card-value">4</div>
-                <div class="card-subtitle">Dans les 30 prochains jours</div>
-                <div class="card-footer">
-                    <span>Prochain paiement: 15 avril 2025</span>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Échéances en retard</div>
-                    </div>
-                    <div class="card-icon danger">⚠️</div>
-                </div>
-                <div class="card-value">0</div>
-                <div class="card-subtitle">Aucun retard de paiement</div>
-                <div class="card-footer">
-                    <span>Vous êtes à jour !</span>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Montant dû</div>
-                    </div>
-                    <div class="card-icon primary">💶</div>
-                </div>
-                <div class="card-value">450 €</div>
-                <div class="card-subtitle">Total échéances à venir</div>
-                <div class="card-footer">
-                    <span>Prochain montant: 150 €</span>
-                </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Échéances complétées</div>
-                    </div>
-                    <div class="card-icon success">✅</div>
-                </div>
-                <div class="card-value">12</div>
-                <div class="card-subtitle">Ce trimestre</div>
-                <div class="card-footer">
-                    <span>Dernier paiement: 01/04/2025</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Filtres -->
-        <div class="filters-container">
-            <div class="filters">
-                <div class="filter-group">
-                    <label for="filter-cotisation">Cotisation</label>
-                    <select id="filter-cotisation">
-                        <option value="all">Toutes les cotisations</option>
-                        <option value="1">Voyage à Bali</option>
-                        <option value="2">Fonds d'urgence</option>
-                        <option value="3">Anniversaire Marie</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="filter-status">Statut</label>
-                    <select id="filter-status">
-                        <option value="all">Tous les statuts</option>
-                        <option value="pending">À venir</option>
-                        <option value="late">En retard</option>
-                        <option value="paid">Payées</option>
-                    </select>
-                </div>
-                
-                <div class="filter-group">
-                    <label for="filter-period">Période</label>
-                    <select id="filter-period">
-                        <option value="30">30 prochains jours</option>
-                        <option value="90">3 prochains mois</option>
-                        <option value="180">6 prochains mois</option>
-                        <option value="past">Historique</option>
-                    </select>
-                </div>
-                
-                <button class="btn btn-outline btn-sm">
-                    <span class="btn-icon">🔄</span>
-                    Rafraîchir
+            <a href="{{ path('app_utilisateur') }}" style="width: 100%; text-decoration: none;">
+                <button class="btn btn-outline" style="width: 100%; margin-bottom: 1rem;">
+                    <span class="btn-icon">↩️</span>
+                    Retour au tableau de bord
                 </button>
-            </div>
+            </a>
         </div>
         
-        <!-- Vue liste -->
-        <div class="table-container" id="list-view">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date d'échéance</th>
-                        <th>Cotisation</th>
-                        <th>Montant</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>15/04/2025</td>
-                        <td>Voyage à Bali</td>
-                        <td>150 €</td>
-                        <td><span class="status status-pending">À venir</span></td>
-                        <td class="action-cell">
-                            <button class="btn btn-primary btn-sm pay-now">Payer</button>
-                            <button class="action-btn">📝</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>20/04/2025</td>
-                        <td>Fonds d'urgence</td>
-                        <td>200 €</td>
-                        <td><span class="status status-pending">À venir</span></td>
-                        <td class="action-cell">
-                            <button class="btn btn-primary btn-sm pay-now">Payer</button>
-                            <button class="action-btn">📝</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>01/04/2025</td>
-                        <td>Voyage à Bali</td>
-                        <td>150 €</td>
-                        <td><span class="status status-completed">Payée</span></td>
-                        <td class="action-cell">
-                            <button class="btn btn-outline btn-sm">Reçu</button>
-                            <button class="action-btn">📝</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>15/05/2025</td>
-                        <td>Voyage à Bali</td>
-                        <td>150 €</td>
-                        <td><span class="status status-pending">À venir</span></td>
-                        <td class="action-cell">
-                            <button class="btn btn-primary btn-sm pay-now">Payer</button>
-                            <button class="action-btn">📝</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>23/03/2025</td>
-                        <td>Fonds d'urgence</td>
-                        <td>200 €</td>
-                        <td><span class="status status-completed">Payée</span></td>
-                        <td class="action-cell">
-                            <button class="btn btn-outline btn-sm">Reçu</button>
-                            <button class="action-btn">📝</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>15/06/2025</td>
-                        <td>Voyage à Bali</td>
-                        <td>150 €</td>
-                        <td><span class="status status-pending">À venir</span></td>
-                        <td class="action-cell">
-                            <button class="btn btn-primary btn-sm pay-now">Payer</button>
-                            <button class="action-btn">📝</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Vue calendrier (masquée par défaut) -->
-        <div class="calendar-container" id="calendar-view" style="display: none;">
-            <div class="calendar-header">
-                <button class="btn btn-outline btn-sm" id="prev-month">◀</button>
-                <h2 id="current-month">Avril 2025</h2>
-                <button class="btn btn-outline btn-sm" id="next-month">▶</button>
-            </div>
-            <div class="calendar">
-                <div class="calendar-weekdays">
-                    <div>Lun</div>
-                    <div>Mar</div>
-                    <div>Mer</div>
-                    <div>Jeu</div>
-                    <div>Ven</div>
-                    <div>Sam</div>
-                    <div>Dim</div>
-                </div>
-                <div class="calendar-days">
-                    <!-- Days will be generated by JavaScript -->
-                </div>
-            </div>
-            <div class="calendar-legend">
-                <div class="legend-item">
-                    <div class="legend-color payment-due"></div>
-                    <span>Échéance à venir</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color payment-paid"></div>
-                    <span>Échéance payée</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color payment-late"></div>
-                    <span>Échéance en retard</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Modal de paiement -->
-    <div class="modal" id="payment-modal">
-        <div class="modal-overlay"></div>
-        <div class="modal-container">
-            <div class="modal-header">
-                <h2>Effectuer un paiement</h2>
-                <button class="modal-close">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="payment-form">
-                    <div class="form-group">
-                        <label for="payment-cotisation">Cotisation</label>
-                        <select id="payment-cotisation" required>
-                            <option value="">Sélectionner une cotisation</option>
-                            <option value="1">Voyage à Bali (échéance: 15/04/2025)</option>
-                            <option value="2">Fonds d'urgence (échéance: 20/04/2025)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="payment-amount">Montant (€)</label>
-                        <input type="number" id="payment-amount" required min="1" value="150">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="payment-method">Méthode de paiement</label>
-                        <select id="payment-method" required>
-                            <option value="">Sélectionner une méthode</option>
-                            <option value="card">Carte bancaire</option>
-                            <option value="mobile">Mobile Money</option>
-                        </select>
-                    </div>
-                    
-                    <div id="card-payment-details" style="display: none;">
-                        <div class="form-group">
-                            <label for="card-number">Numéro de carte</label>
-                            <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX">
+        <!-- Cotisation Details -->
+        <div class="form-container">
+            <div class="form-section">
+                <h2>Détails de la cotisation</h2>
+                {% if cotisation is defined %}
+                <div class="cotisation-info">
+                    <div class="info-row">
+                        <div class="info-item">
+                            <span class="info-label">Titre:</span>
+                            <span class="info-value">{{ cotisation.titre }}</span>
                         </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="card-expiry">Date d'expiration</label>
-                                <input type="text" id="card-expiry" placeholder="MM/AA">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="card-cvv">CVV</label>
-                                <input type="text" id="card-cvv" placeholder="123" maxlength="3">
-                            </div>
+                        <div class="info-item">
+                            <span class="info-label">Initiateur:</span>
+                            <span class="info-value">{{ cotisation.initiateur }}</span>
                         </div>
                     </div>
-                    
-                    <div id="mobile-payment-details" style="display: none;">
-                        <div class="form-group">
-                            <label for="mobile-number">Numéro de téléphone</label>
-                            <input type="tel" id="mobile-number" placeholder="+XX XXXXXXXXX">
+                    <div class="info-row">
+                        <div class="info-item">
+                            <span class="info-label">Montant objectif:</span>
+                            <span class="info-value">{{ cotisation.montantObjectif }} FCFA</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Montant par échéance:</span>
+                            <span class="info-value">{{ cotisation.montantEcheance }} FCFA</span>
                         </div>
                     </div>
-                    
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-outline modal-close">Annuler</button>
-                        <button type="submit" class="btn btn-primary">
-                            <span class="btn-icon">✓</span>
-                            Confirmer le paiement
+                    <div class="info-row">
+                        <div class="info-item">
+                            <span class="info-label">Périodicité:</span>
+                            <span class="info-value">{{ cotisation.periodicite }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Dates:</span>
+                            <span class="info-value">Du {{ cotisation.dateDebut|date('d/m/Y') }} 
+                                {% if cotisation.dateFin %}
+                                    au {{ cotisation.dateFin|date('d/m/Y') }}
+                                {% else %}
+                                    (sans date de fin)
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-info">
+                            <span>Progression: {{ cotisation.montantCollecte|default(0) }} / {{ cotisation.montantObjectif }} FCFA</span>
+                            <span>{{ ((cotisation.montantCollecte|default(0) / cotisation.montantObjectif) * 100)|round }}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-value" style="width: {{ ((cotisation.montantCollecte|default(0) / cotisation.montantObjectif) * 100)|round }}%"></div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="empty-cotisation">
+                    <p>Aucune cotisation sélectionnée</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Liste des échéances -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h2>Échéances</h2>
+                    <button type="button" class="btn btn-sm btn-primary" id="addEcheanceBtn">
+                        <span class="btn-icon">+</span>
+                        Ajouter une échéance
+                    </button>
+                </div>
+                
+                <div class="echeances-list">
+                    <table class="echeances-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                                <th>Membres payés</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if echeances is defined and echeances|length > 0 %}
+                                {% for echeance in echeances %}
+                                    <tr>
+                                        <td>{{ echeance.datePaiementNormal|date('d/m/Y') }}</td>
+                                        <td>{{ echeance.montant }} FCFA</td>
+                                        <td>
+                                            <span class="status-badge {% if echeance.paiement %}status-paid{% else %}status-pending{% endif %}">
+                                                {{ echeance.paiement ? 'Payée' : 'En attente' }}
+                                            </span>
+                                        </td>
+                                        <td>{{ echeance.membresPaies|default(0) }}/{{ echeance.totalMembres }}</td>
+                                        <td class="actions-cell">
+                                            <button class="btn btn-sm btn-outline action-btn view-btn" data-id="{{ echeance.id }}">
+                                                👁️ Voir
+                                            </button>
+                                            <button class="btn btn-sm btn-outline action-btn edit-btn" data-id="{{ echeance.id }}">
+                                                ✏️ Modifier
+                                            </button>
+                                            <button class="btn btn-sm btn-outline action-btn notify-btn" data-id="{{ echeance.id }}">
+                                                📱 Notifier
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="no-data">Aucune échéance n'est disponible pour cette cotisation</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Gestion des membres -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h2>Gestion des membres</h2>
+                    <div class="section-actions">
+                        <button type="button" class="btn btn-sm btn-outline" id="toggleAddMembersBtn">
+                            <span class="btn-icon">+</span>
+                            Ajouter des membres
                         </button>
                     </div>
-                </form>
+                </div>
+                
+                <!-- Ajout de membres (caché par défaut) -->
+                <div class="add-members-container" style="display: none;">
+                    <div class="form-group">
+                        <label for="searchMember">Rechercher un membre</label>
+                        <div class="search-input-container">
+                            <input type="text" id="searchMember" placeholder="Nom, prénom ou numéro de téléphone">
+                            <button type="button" class="search-btn">🔍</button>
+                        </div>
+                    </div>
+                    
+                    <div class="members-list-container">
+                        <h3>Membres disponibles</h3>
+                        <div class="members-list">
+                            {% if utilisateursDisponibles is defined and utilisateursDisponibles|length > 0 %}
+                                {% for utilisateur in utilisateursDisponibles %}
+                                    <div class="member-item" data-id="{{ utilisateur.id }}" data-nom="{{ utilisateur.nom }}" data-prenom="{{ utilisateur.prenom }}" data-telephone="{{ utilisateur.telephone }}">
+                                        <div class="member-info">
+                                            <div class="member-name">{{ utilisateur.nom }} {{ utilisateur.prenom }}</div>
+                                            <div class="member-phone">{{ utilisateur.telephone }}</div>
+                                        </div>
+                                        <button type="button" class="add-member-btn">+</button>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="empty-members">
+                                    <p>Aucun membre disponible à ajouter</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Liste des membres actuels -->
+                <div class="current-members-container">
+                    <h3>Membres actuels</h3>
+                    <div class="members-table-container">
+                        <table class="members-table">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Téléphone</th>
+                                    <th>Échéances payées</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if membres is defined and membres|length > 0 %}
+                                    {% for membre in membres %}
+                                        <tr>
+                                            <td>{{ membre.nom }}</td>
+                                            <td>{{ membre.prenom }}</td>
+                                            <td>{{ membre.telephone }}</td>
+                                            <td>{{ membre.echeancesPayees|default(0) }}/{{ echeances|length }}</td>
+                                            <td class="actions-cell">
+                                                <button class="btn btn-sm btn-outline action-btn history-btn" data-id="{{ membre.id }}">
+                                                    📊 Historique
+                                                </button>
+                                                <button class="btn btn-sm btn-outline action-btn remove-btn" data-id="{{ membre.id }}">
+                                                    ❌ Retirer
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="no-data">Aucun membre n'est inscrit à cette cotisation</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal pour ajouter une échéance -->
+        <div class="modal" id="addEcheanceModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Ajouter une échéance</h3>
+                    <button type="button" class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form id="addEcheanceForm">
+                        <div class="form-group">
+                            <label for="dateEcheance">Date de l'échéance</label>
+                            <input type="date" id="dateEcheance" name="dateEcheance" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="montantEcheance">Montant (FCFA)</label>
+                            <input type="number" id="montantEcheance" name="montantEcheance" min="1" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline cancel-btn">Annuler</button>
+                            <button type="submit" class="btn btn-primary">
+                                <span class="btn-icon">✓</span>
+                                Ajouter
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal confirmation pour retirer un membre -->
+        <div class="modal" id="removeMemberModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Confirmer le retrait</h3>
+                    <button type="button" class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir retirer ce membre de la cotisation ?</p>
+                    <input type="hidden" id="membreToRemove">
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline cancel-btn">Annuler</button>
+                        <button type="button" class="btn btn-danger confirm-remove-btn">
+                            <span class="btn-icon">❌</span>
+                            Confirmer le retrait
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -386,183 +337,185 @@
             document.getElementById('sidebar').classList.toggle('active');
         });
         
-        // Toggle between list and calendar views
-        document.querySelector('.calendar-toggle').addEventListener('click', function(e) {
-            e.preventDefault();
-            const listView = document.getElementById('list-view');
-            const calendarView = document.getElementById('calendar-view');
-            
-            if (listView.style.display !== 'none') {
-                listView.style.display = 'none';
-                calendarView.style.display = 'block';
-                this.innerHTML = '<span class="btn-icon">📋</span> Vue liste';
-                generateCalendar();
+        // Mobile detection for responsive UI
+        function checkMobile() {
+            if (window.innerWidth <= 768) {
+                document.querySelector('.mobile-actions').style.display = 'block';
+                document.querySelector('.action-buttons').style.display = 'none';
             } else {
-                listView.style.display = 'block';
-                calendarView.style.display = 'none';
-                this.innerHTML = '<span class="btn-icon">📆</span> Vue calendrier';
-            }
-        });
-        
-        // Payment modal
-        const modal = document.getElementById('payment-modal');
-        const modalOverlay = document.querySelector('.modal-overlay');
-        const openModalBtn = document.getElementById('effectuerPaiementBtn');
-        const closeModalBtns = document.querySelectorAll('.modal-close');
-        const payNowBtns = document.querySelectorAll('.pay-now');
-        
-        openModalBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            modal.classList.add('active');
-        });
-        
-        payNowBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                modal.classList.add('active');
-            });
-        });
-        
-        closeModalBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                modal.classList.remove('active');
-            });
-        });
-        
-        modalOverlay.addEventListener('click', function() {
-            modal.classList.remove('active');
-        });
-        
-        // Payment method toggle
-        document.getElementById('payment-method').addEventListener('change', function() {
-            const cardDetails = document.getElementById('card-payment-details');
-            const mobileDetails = document.getElementById('mobile-payment-details');
-            
-            if (this.value === 'card') {
-                cardDetails.style.display = 'block';
-                mobileDetails.style.display = 'none';
-            } else if (this.value === 'mobile') {
-                cardDetails.style.display = 'none';
-                mobileDetails.style.display = 'block';
-            } else {
-                cardDetails.style.display = 'none';
-                mobileDetails.style.display = 'none';
-            }
-        });
-        
-        // Generate calendar
-        function generateCalendar() {
-            const calendarDays = document.querySelector('.calendar-days');
-            calendarDays.innerHTML = '';
-            
-            // Example data - this would normally come from your backend
-            const paymentDates = {
-                '2025-04-01': { status: 'paid', cotisation: 'Voyage à Bali', amount: '150 €' },
-                '2025-04-15': { status: 'due', cotisation: 'Voyage à Bali', amount: '150 €' },
-                '2025-04-20': { status: 'due', cotisation: 'Fonds d\'urgence', amount: '200 €' },
-                '2025-05-15': { status: 'due', cotisation: 'Voyage à Bali', amount: '150 €' },
-                '2025-03-23': { status: 'paid', cotisation: 'Fonds d\'urgence', amount: '200 €' }
-            };
-            
-            // Get current date
-            const now = new Date();
-            const currentMonth = now.getMonth();
-            const currentYear = now.getFullYear();
-            
-            // Update month display
-            const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 
-                              'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-            document.getElementById('current-month').textContent = `${monthNames[currentMonth]} ${currentYear}`;
-            
-            // Get first day of month and last day
-            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            
-            // Adjust for Monday as first day of week
-            const startingDay = firstDay === 0 ? 6 : firstDay - 1;
-            
-            // Create empty cells for days before start of month
-            for (let i = 0; i < startingDay; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.className = 'calendar-day empty';
-                calendarDays.appendChild(emptyDay);
-            }
-            
-            // Create cells for days in month
-            for (let i = 1; i <= daysInMonth; i++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'calendar-day';
-                
-                // Current day
-                const currentDate = new Date();
-                if (i === currentDate.getDate() && 
-                    currentMonth === currentDate.getMonth() && 
-                    currentYear === currentDate.getFullYear()) {
-                    dayCell.classList.add('today');
-                }
-                
-                // Add day number
-                const dayNumber = document.createElement('div');
-                dayNumber.className = 'day-number';
-                dayNumber.textContent = i;
-                dayCell.appendChild(dayNumber);
-                
-                // Check if there are payments on this day
-                const dateString = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
-                if (paymentDates[dateString]) {
-                    const payment = paymentDates[dateString];
-                    
-                    // Add payment indicator
-                    const paymentIndicator = document.createElement('div');
-                    paymentIndicator.className = `payment-indicator payment-${payment.status}`;
-                    
-                    // Add payment details
-                    const paymentDetails = document.createElement('div');
-                    paymentDetails.className = 'payment-details';
-                    paymentDetails.innerHTML = `
-                        <div class="payment-name">${payment.cotisation}</div>
-                        <div class="payment-amount">${payment.amount}</div>
-                        <div class="payment-status">${payment.status === 'paid' ? 'Payée' : 'À payer'}</div>
-                    `;
-                    
-                    paymentIndicator.appendChild(paymentDetails);
-                    dayCell.appendChild(paymentIndicator);
-                    
-                    // Add pay button for due payments
-                    if (payment.status === 'due') {
-                        const payButton = document.createElement('button');
-                        payButton.className = 'btn btn-primary btn-xs pay-calendar';
-                        payButton.textContent = 'Payer';
-                        payButton.addEventListener('click', function() {
-                            modal.classList.add('active');
-                        });
-                        dayCell.appendChild(payButton);
-                    }
-                }
-                
-                calendarDays.appendChild(dayCell);
+                document.querySelector('.mobile-actions').style.display = 'none';
+                document.querySelector('.action-buttons').style.display = 'flex';
             }
         }
         
-        // Handle calendar navigation
-        document.getElementById('prev-month').addEventListener('click', function() {
-            // Implement previous month navigation
-            // This would update the calendar data and re-render
+        // Check on load and resize
+        window.addEventListener('load', checkMobile);
+        window.addEventListener('resize', checkMobile);
+        
+        // Gestion de l'ajout des membres
+        const toggleAddMembersBtn = document.getElementById('toggleAddMembersBtn');
+        const addMembersContainer = document.querySelector('.add-members-container');
+        
+        if (toggleAddMembersBtn) {
+            toggleAddMembersBtn.addEventListener('click', function() {
+                if (addMembersContainer.style.display === 'none' || addMembersContainer.style.display === '') {
+                    addMembersContainer.style.display = 'block';
+                    this.innerHTML = '<span class="btn-icon">-</span> Masquer';
+                } else {
+                    addMembersContainer.style.display = 'none';
+                    this.innerHTML = '<span class="btn-icon">+</span> Ajouter des membres';
+                }
+            });
+        }
+        
+        // Gestion de la recherche de membres
+        const searchInput = document.getElementById('searchMember');
+        const memberItems = document.querySelectorAll('.member-item');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                memberItems.forEach(item => {
+                    const nom = item.dataset.nom.toLowerCase();
+                    const prenom = item.dataset.prenom.toLowerCase();
+                    const telephone = item.dataset.telephone.toLowerCase();
+                    
+                    if (nom.includes(searchTerm) || prenom.includes(searchTerm) || telephone.includes(searchTerm)) {
+                        item.style.display = 'flex';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Ajouter un membre
+        document.querySelectorAll('.add-member-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const memberItem = this.closest('.member-item');
+                const memberId = memberItem.dataset.id;
+                
+                // Ici, vous devriez faire une requête AJAX pour ajouter le membre
+                // Pour l'instant, on simule juste un succès
+                this.disabled = true;
+                this.textContent = '✓';
+                
+                // En production, vous feriez une requête AJAX ici
+                /*
+                fetch('/echeance/ajouter-membre', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cotisationId: cotisationId, // À définir globalement
+                        membreId: memberId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Actualiser la liste des membres
+                        window.location.reload();
+                    }
+                });
+                */
+            });
         });
         
-        document.getElementById('next-month').addEventListener('click', function() {
-            // Implement next month navigation
-            // This would update the calendar data and re-render
+        // Ouvrir modal pour retirer un membre
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const membreId = this.getAttribute('data-id');
+                document.getElementById('membreToRemove').value = membreId;
+                document.getElementById('removeMemberModal').style.display = 'flex';
+            });
         });
         
-        // Form submission
-        document.getElementById('payment-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Paiement effectué avec succès !');
-            modal.classList.remove('active');
+        // Confirmer le retrait d'un membre
+        document.querySelector('.confirm-remove-btn')?.addEventListener('click', function() {
+            const membreId = document.getElementById('membreToRemove').value;
             
-            // Here you would normally send the payment data to your server
+            // Ici, vous feriez une requête AJAX pour retirer le membre
+            // En production, vous feriez une requête AJAX ici
+            /*
+            fetch('/echeance/retirer-membre', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    cotisationId: cotisationId, // À définir globalement
+                    membreId: membreId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Fermer le modal et actualiser
+                    document.getElementById('removeMemberModal').style.display = 'none';
+                    window.location.reload();
+                }
+            });
+            */
+            
+            // Pour la démo, on ferme juste le modal
+            document.getElementById('removeMemberModal').style.display = 'none';
+        });
+        
+        // Gérer le modal d'ajout d'échéance
+        const addEcheanceBtn = document.getElementById('addEcheanceBtn');
+        const addEcheanceModal = document.getElementById('addEcheanceModal');
+        
+        if (addEcheanceBtn) {
+            addEcheanceBtn.addEventListener('click', function() {
+                addEcheanceModal.style.display = 'flex';
+            });
+        }
+        
+        // Fermer les modals
+        document.querySelectorAll('.close-modal, .cancel-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            });
+        });
+        
+        // Soumission du formulaire d'ajout d'échéance
+        document.getElementById('addEcheanceForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const dateEcheance = document.getElementById('dateEcheance').value;
+            const montantEcheance = document.getElementById('montantEcheance').value;
+            
+            // Ici, vous feriez une requête AJAX pour ajouter l'échéance
+            // En production, vous feriez une requête AJAX ici
+            /*
+            fetch('/echeance/ajouter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    cotisationId: cotisationId, // À définir globalement
+                    dateEcheance: dateEcheance,
+                    montantEcheance: montantEcheance
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Fermer le modal et actualiser
+                    addEcheanceModal.style.display = 'none';
+                    window.location.reload();
+                }
+            });
+            */
+            
+            // Pour la démo, on ferme juste le modal
+            addEcheanceModal.style.display = 'none';
         });
     </script>
-    
-   
 {% endblock %}
