@@ -4,7 +4,7 @@
 
 {% block body %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('css/utilisateur.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/utilisateu.css') }}">
 {% endblock %}
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -30,7 +30,7 @@
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">👥</span>
-                <span><a href="#" style="color: #fff; text-decoration: none;">Mes cotisations</a></span>
+                <span><a href="#" style="color: #fff; text-decoration: none;">Mes  cotisations</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">📊</span>
@@ -49,6 +49,9 @@
             </div>
         </div>
     </div>
+    
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
     
     <!-- Main Content -->
     <div class="main-content">
@@ -79,9 +82,9 @@
             </a>
         </div>
         
-        <!-- Dashboard Summary Cards -->
+        <!-- Dashboard Summary Cards with improved visualization -->
         <div class="dashboard-grid">
-            <div class="card">
+            <div class="card summary-card">
                 <div class="card-header">
                     <div>
                         <div class="card-title">Mes cotisations</div>
@@ -95,7 +98,7 @@
                         0
                     {% endif %}
                 </div>
-                <div class="card-subtitle">Groupes d'épargne</div>
+                <div class="card-subtitle">Groupes d'épargne actifs</div>
                 <div class="card-footer">
                     {% if nouvelles_cotisations is defined and nouvelles_cotisations > 0 %}
                         <span class="trend-up">↑ {{ nouvelles_cotisations }} </span>
@@ -106,7 +109,7 @@
                 </div>
             </div>
             
-            <div class="card">
+            <div class="card summary-card">
                 <div class="card-header">
                     <div>
                         <div class="card-title">Épargne totale</div>
@@ -132,9 +135,17 @@
                         <span>Stable depuis le mois dernier</span>
                     {% endif %}
                 </div>
+                
+                <!-- Ajout d'une barre de progression visuelle -->
+                {% if epargne_totale is defined and epargne_totale_objectif is defined and epargne_totale_objectif > 0 %}
+                <div class="progress-container">
+                    <div class="progress-bar success" style="width: {{ (epargne_totale / epargne_totale_objectif * 100)|round }}%"></div>
+                </div>
+                <div class="progress-text">{{ (epargne_totale / epargne_totale_objectif * 100)|round }}% de l'objectif total</div>
+                {% endif %}
             </div>
             
-            <div class="card">
+            <div class="card summary-card">
                 <div class="card-header">
                     <div>
                         <div class="card-title">Prochain versement</div>
@@ -143,9 +154,21 @@
                 </div>
                 {% if prochain_versement is defined and prochain_versement %}
                     <div class="card-value">{{ prochain_versement.montant|number_format(0, ',', ' ') }} FCFA</div>
-                    <div class="card-subtitle">Échéance: {{ prochain_versement.date|date('d F Y') }}</div>
-                    <div class="card-footer">
-                        <span>Dans {{ prochain_versement.jours_restants }} jours</span>
+                    <div class="card-subtitle">
+                        <span class="cotisation-name">{{ prochain_versement.cotisation_nom }}</span>
+                        <br>Échéance: {{ prochain_versement.date|date('d F Y') }}
+                    </div>
+                    <div class="card-footer countdown">
+                        {% if prochain_versement.jours_restants <= 3 %}
+                            <span class="badge badge-danger">Dans {{ prochain_versement.jours_restants }} jours</span>
+                        {% elseif prochain_versement.jours_restants <= 7 %}
+                            <span class="badge badge-warning">Dans {{ prochain_versement.jours_restants }} jours</span>
+                        {% else %}
+                            <span class="badge badge-info">Dans {{ prochain_versement.jours_restants }} jours</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-actions">
+                        <a href="{{ path('app_faire_depot', {'id': prochain_versement.cotisation_id}) }}" class="btn btn-sm btn-primary">Payer maintenant</a>
                     </div>
                 {% else %}
                     <div class="card-value">0 FCFA</div>
@@ -156,7 +179,7 @@
                 {% endif %}
             </div>
             
-            <div class="card">
+            <div class="card summary-card">
                 <div class="card-header">
                     <div>
                         <div class="card-title">Objectif principal</div>
@@ -165,7 +188,13 @@
                 </div>
                 {% if objectif_principal is defined and objectif_principal %}
                     <div class="card-value">{{ objectif_principal.progression }}%</div>
-                    <div class="card-subtitle">{{ objectif_principal.nom }} - {{ objectif_principal.montant_actuel|number_format(0, ',', ' ') }} FCFA/{{ objectif_principal.montant_objectif|number_format(0, ',', ' ') }} FCFA</div>
+                    <div class="card-subtitle">{{ objectif_principal.nom }}</div>
+                    <div class="progress-container">
+                        <div class="progress-bar primary" style="width: {{ objectif_principal.progression }}%"></div>
+                    </div>
+                    <div class="card-details">
+                        {{ objectif_principal.montant_actuel|number_format(0, ',', ' ') }} FCFA / {{ objectif_principal.montant_objectif|number_format(0, ',', ' ') }} FCFA
+                    </div>
                     <div class="card-footer">
                         {% if objectif_principal.evolution > 0 %}
                             <span class="trend-up">↑ {{ objectif_principal.evolution }}% </span>
@@ -185,145 +214,220 @@
         </div>
         
         <!-- Mes groupes d'épargne -->
-        <div class="section-title">
-            <h2>Mes groupes de cotisation</h2>
-            <a href="#" class="view-all">Voir toutes mes cotisations →</a>
-        </div>
-        
-        <div class="table-container">
-            {% if cotisations is defined and cotisations is empty %}
-                <div class="empty-state">
-                    <p>Vous ne participez à aucun groupe de cotisation pour le moment.</p>
-                    <a href="{{ path('app_creation_cotisation') }}" class="btn btn-primary empty-action">
-                        <span class="btn-icon">➕</span> Créer une cotisation
-                    </a>
-                    <a href="{{ path('app_cotisations_disponibles') }}" class="btn btn-outline empty-action">
-                        <span class="btn-icon">🔍</span> Voir les cotisations disponibles
-                    </a>
-                </div>
-            {% elseif cotisations is defined %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nom du groupe</th>
-                            <th>Membres</th>
-                            <th>Objectif</th>
-                            <th>Progression</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for cotisation in cotisations|slice(0, 3) %}
-                            <tr>
-                                <td>{{ cotisation.nom }}</td>
-                                <td>{{ cotisation.membres|length }} membres</td>
-                                <td>{{ cotisation.montant_objectif|number_format(0, ',', ' ') }} FCFA</td>
-                                <td>{{ cotisation.montant_actuel|number_format(0, ',', ' ') }} FCFA ({{ cotisation.progression }}%)</td>
-                                <td>
-                                    {% if cotisation.statut == 'actif' %}
-                                        <span class="status status-active">Actif</span>
-                                    {% elseif cotisation.statut == 'complété' %}
-                                        <span class="status status-completed">Complété</span>
-                                    {% elseif cotisation.statut == 'attente' %}
-                                        <span class="status status-pending">En attente</span>
-                                    {% endif %}
-                                </td>
-                                <td class="action-cell">
-                                    <a href="{{ path('app_detail_cotisation', {'id': cotisation.id}) }}" class="action-btn" title="Détails">👁️</a>
-                                    {% if app.user.id == cotisation.createur_id %}
-                                        <a href="{{ path('app_gestion_cotisation', {'id': cotisation.id}) }}" class="action-btn" title="Gérer">⚙️</a>
-                                    {% endif %}
-                                    <a href="{{ path('app_faire_depot', {'id': cotisation.id}) }}" class="action-btn" title="Faire un dépôt">💰</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-        </div>
-        
-        <!-- Historique récent -->
-        <div class="section-title">
-            <h2>Activités récentes</h2>
-            <a href="#" class="view-all">Voir l'historique complet →</a>
-        </div>
-        
-        <div class="table-container">
-            {% if activites is defined and activites is empty %}
-                <div class="empty-state">
-                    <p>Aucune activité récente à afficher.</p>
-                </div>
-            {% elseif activites is defined %}
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Groupe</th>
-                            <th>Montant</th>
-                            <th>Statut</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for activite in activites|slice(0, 5) %}
-                            <tr>
-                                <td>{{ activite.date|date('d/m/Y') }}</td>
-                                <td>{{ activite.type }}</td>
-                                <td>{{ activite.cotisation }}</td>
-                                <td>{% if activite.montant %}{{ activite.montant|number_format(0, ',', ' ') }} FCFA{% else %}—{% endif %}</td>
-                                <td>
-                                    {% if activite.statut == 'confirmé' %}
-                                        <span class="status status-completed">Confirmé</span>
-                                    {% elseif activite.statut == 'en attente' %}
-                                        <span class="status status-pending">En attente</span>
-                                    {% elseif activite.statut == 'refusé' %}
-                                        <span class="status status-danger">Refusé</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-        </div>
-        
-        <!-- Invitations en attente -->
-        {% if invitations is defined and invitations is not empty %}
+        <div class="section-wrapper">
             <div class="section-title">
-                <h2>Invitations en attente</h2>
-                <a href="#" class="view-all">Voir toutes les invitations →</a>
+                <h2>Mes groupes de cotisation</h2>
+                <a href="#" class="view-all">Voir toutes mes cotisations →</a>
             </div>
             
             <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Groupe</th>
-                            <th>Créateur</th>
-                            <th>Objectif</th>
-                            <th>Date d'invitation</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                {% if cotisations is defined and cotisations is empty %}
+                    <div class="empty-state">
+                        <img src="{{ asset('image/empty-groups.svg') }}" alt="Aucun groupe" class="empty-icon">
+                        <p>Vous ne participez à aucun groupe de cotisation pour le moment.</p>
+                        <div class="empty-actions">
+                            <a href="{{ path('app_creation_cotisation') }}" class="btn btn-primary empty-action">
+                                <span class="btn-icon">➕</span> Créer une cotisation
+                            </a>
+                            <a href="{{ path('app_cotisations_disponibles') }}" class="btn btn-outline empty-action">
+                                <span class="btn-icon">🔍</span> Voir les cotisations disponibles
+                            </a>
+                        </div>
+                    </div>
+                {% elseif cotisations is defined %}
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nom du groupe</th>
+                                    <th>Membres</th>
+                                    <th>Objectif</th>
+                                    <th>Progression</th>
+                                    <th>Statut</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cotisation in cotisations|slice(0, 3) %}
+                                    <tr>
+                                        <td class="cotisation-name">{{ cotisation.nom }}</td>
+                                        <td>{{ cotisation.membres|length }} membres</td>
+                                        <td>{{ cotisation.montant_objectif|number_format(0, ',', ' ') }} FCFA</td>
+                                        <td>
+                                            <div class="progress-data">
+                                                <span>{{ cotisation.montant_actuel|number_format(0, ',', ' ') }} FCFA</span>
+                                                <div class="progress-container small">
+                                                    <div class="progress-bar {{ cotisation.progression < 30 ? 'danger' : (cotisation.progression < 70 ? 'warning' : 'success') }}" style="width: {{ cotisation.progression }}%"></div>
+                                                </div>
+                                                <span class="progress-percent">{{ cotisation.progression }}%</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if cotisation.statut == 'actif' %}
+                                                <span class="status status-active">Actif</span>
+                                            {% elseif cotisation.statut == 'complété' %}
+                                                <span class="status status-completed">Complété</span>
+                                            {% elseif cotisation.statut == 'attente' %}
+                                                <span class="status status-pending">En attente</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="action-cell">
+                                            <a href="{{ path('app_detail_cotisation', {'id': cotisation.id}) }}" class="action-btn tooltip" title="Détails">
+                                                <span class="tooltip-text">Voir détails</span>
+                                                👁️
+                                            </a>
+                                            {% if app.user.id == cotisation.createur_id %}
+                                                <a href="{{ path('app_gestion_cotisation', {'id': cotisation.id}) }}" class="action-btn tooltip" title="Gérer">
+                                                    <span class="tooltip-text">Gérer le groupe</span>
+                                                    ⚙️
+                                                </a>
+                                            {% endif %}
+                                            <a href="{{ path('app_faire_depot', {'id': cotisation.id}) }}" class="action-btn tooltip" title="Faire un dépôt">
+                                                <span class="tooltip-text">Faire un dépôt</span>
+                                                💰
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if cotisations|length > 3 %}
+                        <div class="view-more-container">
+                            <a href="#" class="view-more">Voir {{ cotisations|length - 3 }} autres cotisations</a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Historique des activités récentes avec visualisation améliorée -->
+        <div class="section-wrapper">
+            <div class="section-title">
+                <h2>Activités récentes</h2>
+                <a href="#" class="view-all">Voir l'historique complet →</a>
+            </div>
+            
+            <div class="table-container">
+                {% if activites is defined and activites is empty %}
+                    <div class="empty-state">
+                        <img src="{{ asset('image/empty-activities.svg') }}" alt="Aucune activité" class="empty-icon">
+                        <p>Aucune activité récente à afficher.</p>
+                    </div>
+                {% elseif activites is defined %}
+                    <div class="table-responsive">
+                        <table class="activity-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Groupe</th>
+                                    <th>Montant</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for activite in activites|slice(0, 5) %}
+                                    <tr class="activity-row {{ activite.type == 'versement' ? 'activity-payment' : '' }}">
+                                        <td>
+                                            <div class="activity-date">
+                                                <span class="day">{{ activite.date|date('d') }}</span>
+                                                <span class="month">{{ activite.date|date('M') }}</span>
+                                            </div>
+                                            <span class="time">{{ activite.date|date('H:i') }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="activity-type {{ activite.type }}">
+                                                {% if activite.type == 'versement' %}
+                                                    <span class="activity-icon payment">💸</span> Versement
+                                                {% elseif activite.type == 'inscription' %}
+                                                    <span class="activity-icon join">🤝</span> Inscription
+                                                {% elseif activite.type == 'création' %}
+                                                    <span class="activity-icon create">🆕</span> Création
+                                                {% elseif activite.type == 'retrait' %}
+                                                    <span class="activity-icon withdraw">💳</span> Retrait
+                                                {% else %}
+                                                    <span class="activity-icon other">📝</span> {{ activite.type }}
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td class="cotisation-name">{{ activite.cotisation }}</td>
+                                        <td>
+                                            {% if activite.montant %}
+                                                <span class="activity-amount {{ activite.type == 'versement' ? 'amount-positive' : (activite.type == 'retrait' ? 'amount-negative' : '') }}">
+                                                    {{ activite.montant|number_format(0, ',', ' ') }} FCFA
+                                                </span>
+                                            {% else %}
+                                                <span class="activity-amount-na">—</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if activite.statut == 'confirmé' %}
+                                                <span class="status status-completed">Confirmé</span>
+                                            {% elseif activite.statut == 'en attente' %}
+                                                <span class="status status-pending">En attente</span>
+                                            {% elseif activite.statut == 'refusé' %}
+                                                <span class="status status-danger">Refusé</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if activites|length > 5 %}
+                        <div class="view-more-container">
+                            <a href="#" class="view-more">Voir {{ activites|length - 5 }} autres activités</a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Invitations en attente avec actions claires -->
+        {% if invitations is defined and invitations is not empty %}
+            <div class="section-wrapper">
+                <div class="section-title">
+                    <h2>Invitations en attente</h2>
+                    <a href="#" class="view-all">Voir toutes les invitations →</a>
+                </div>
+                
+                <div class="table-container">
+                    <div class="invitation-cards">
                         {% for invitation in invitations|slice(0, 3) %}
-                            <tr>
-                                <td>{{ invitation.cotisation.nom }}</td>
-                                <td>{{ invitation.createur.nom }} {{ invitation.createur.prenom }}</td>
-                                <td>{{ invitation.cotisation.montant_objectif|number_format(0, ',', ' ') }} FCFA</td>
-                                <td>{{ invitation.date|date('d/m/Y') }}</td>
-                                <td class="action-cell">
+                            <div class="invitation-card">
+                                <div class="invitation-header">
+                                    <div class="invitation-title">{{ invitation.cotisation.nom }}</div>
+                                    <div class="invitation-date">Invité le {{ invitation.date|date('d/m/Y') }}</div>
+                                </div>
+                                <div class="invitation-content">
+                                    <div class="invitation-detail">
+                                        <span class="detail-label">Créateur:</span>
+                                        <span class="detail-value">{{ invitation.createur.nom }} {{ invitation.createur.prenom }}</span>
+                                    </div>
+                                    <div class="invitation-detail">
+                                        <span class="detail-label">Objectif:</span>
+                                        <span class="detail-value">{{ invitation.cotisation.montant_objectif|number_format(0, ',', ' ') }} FCFA</span>
+                                    </div>
+                                    <div class="invitation-detail">
+                                        <span class="detail-label">Membres:</span>
+                                        <span class="detail-value">{{ invitation.cotisation.membres|length }} membres</span>
+                                    </div>
+                                </div>
+                                <div class="invitation-actions">
                                     <a href="{{ path('app_accepter_invitation', {'id': invitation.id}) }}" class="btn btn-sm btn-success">Accepter</a>
                                     <a href="{{ path('app_refuser_invitation', {'id': invitation.id}) }}" class="btn btn-sm btn-outline-danger">Refuser</a>
-                                </td>
-                            </tr>
+                                </div>
+                            </div>
                         {% endfor %}
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
         {% endif %}
     </div>
+    
+    <!-- Toast notifications container -->
+    <div class="toast-container" id="toastContainer"></div>
     
     <script src="{{ asset('js/utilisateur.js') }}"></script>
 {% endblock %}
