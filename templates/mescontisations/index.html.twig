@@ -1,0 +1,227 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes cotisations - CollabÉpargne{% endblock %}
+
+{% block body %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/mcotisations.css') }}">
+{% endblock %}
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">Collab<span>Épargne</span></div>
+            <div class="user-info">
+                <img src="{{ asset('image/profile.png') }}" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <div class="user-name">{{ app.user.nom }} {{ app.user.prenom }}</div>
+                    <div class="user-status">Membre actif</div>
+                </div>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">🏠</span>
+                <span><a href="{{ path('app_utilisateur') }}">Tableau de bord</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">➕</span>
+                <span><a href="{{ path('app_creation_cotisation') }}">Créer une cotisation</a></span>
+            </li>
+            <li class="sidebar-menu-item active">
+                <span class="menu-icon">👥</span>
+                <span><a href="{{ path('app_mes_cotisations') }}">Mes cotisations</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📊</span>
+                <span><a href="#">Historique des contributions</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📅</span>
+                <span><a href="{{ path('app_echeance') }}">Échéances</a></span>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="sidebar-menu-item">
+                <span class="menu-icon">🚪</span>
+                <span><a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <button class="sidebar-toggle" id="sidebar-toggle">➕</button>
+            <h1 class="page-title">Mes cotisations</h1>
+            <div class="action-buttons">
+                <a href="{{ path('app_creation_cotisation') }}" class="btn btn-primary">
+                    <span class="btn-icon">➕</span>
+                    Créer une cotisation
+                </a>
+            </div>
+        </div>
+        
+        <!-- Mobile Action Buttons -->
+        <div class="mobile-actions" style="display: none;">
+            <a href="{{ path('app_creation_cotisation') }}" style="width: 100%; text-decoration: none;">
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 1rem;">
+                    <span class="btn-icon">➕</span>
+                    Créer une cotisation
+                </button>
+            </a>
+        </div>
+        
+        <!-- Tabs navigation -->
+        <div class="tabs-container">
+            <div class="tab-buttons">
+                <button class="tab-button active" id="tab-created">Cotisations créées</button>
+                <button class="tab-button" id="tab-member">Cotisations auxquelles je participe</button>
+            </div>
+        </div>
+        
+        <!-- Tab Content - Cotisations créées -->
+        <div class="tab-content active" id="content-created">
+            <div class="section-container">
+                <h2 class="section-title">Cotisations que j'ai créées</h2>
+                
+                {% if cotisationsCreees is empty %}
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>Aucune cotisation créée</h3>
+                        <p>Vous n'avez pas encore créé de cotisation. Commencez dès maintenant !</p>
+                        <a href="{{ path('app_creation_cotisation') }}" class="btn btn-primary">
+                            <span class="btn-icon">➕</span>
+                            Créer une cotisation
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="cards-grid">
+                        {% for cotisation in cotisationsCreees %}
+                            <div class="cotisation-card">
+                                <div class="card-header">
+                                    <div class="card-title">{{ cotisation.titre }}</div>
+                                    <div class="card-badge {{ cotisation.typeCotisation == 'periodique' ? 'badge-blue' : 'badge-orange' }}">
+                                        {{ cotisation.typeCotisation == 'periodique' ? 'Périodique' : 'Souscription' }}
+                                    </div>
+                                </div>
+                                <div class="card-info">
+                                    <div class="info-item">
+                                        <span class="info-label">Objectif:</span>
+                                        <span class="info-value">{{ cotisation.montantObjectif|number_format(0, ',', ' ') }} FCFA</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Membres:</span>
+                                        <span class="info-value">{{ cotisation.membres|length }}</span>
+                                    </div>
+                                    <div class="info-item">
+                                        <span class="info-label">Progression:</span>
+                                        <div class="progress-container">
+                                            <div class="progress-bar" style="width: {{ (cotisation.montantCollecte / cotisation.montantObjectif * 100)|round }}%"></div>
+                                        </div>
+                                        <span class="progress-text">{{ (cotisation.montantCollecte / cotisation.montantObjectif * 100)|round }}%</span>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <a href="{{ path('app_detail_cotisation', {'id': cotisation.id}) }}" class="btn btn-outline">
+                                        <span class="btn-icon">👁️</span>
+                                        Voir
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Tab Content - Cotisations auxquelles je participe -->
+        <div class="tab-content" id="content-member">
+            <div class="section-container">
+                <h2 class="section-title">Cotisations auxquelles je participe</h2>
+                
+                {% if cotisationsParticipant is empty %}
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <h3>Aucune participation</h3>
+                        <p>Vous ne participez à aucune cotisation pour le moment.</p>
+                    </div>
+                {% else %}
+                    <div class="table-container">
+                        <table class="cotisations-table">
+                            <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Type</th>
+                                    <th>Montant</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cotisation in cotisationsParticipant %}
+                                    <tr>
+                                        <td class="title-cell">{{ cotisation.titre }}</td>
+                                        <td>
+                                            <span class="table-badge {{ cotisation.typeCotisation == 'periodique' ? 'badge-blue' : 'badge-orange' }}">
+                                                {{ cotisation.typeCotisation == 'periodique' ? 'Périodique' : 'Souscription' }}
+                                            </span>
+                                        </td>
+                                        <td class="amount-cell">{{ cotisation.montantEcheance|number_format(0, ',', ' ') }} FCFA</td>
+                                        <td class="actions-cell">
+                                            <a href="{{ path('app_detail_cotisation', {'id': cotisation.id}) }}" class="btn btn-sm btn-outline">
+                                                <span class="btn-icon">👁️</span>
+                                                Voir
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Toggle sidebar on mobile
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+        
+        // Mobile detection for responsive UI
+        function checkMobile() {
+            if (window.innerWidth <= 768) {
+                document.querySelector('.mobile-actions').style.display = 'block';
+                document.querySelector('.action-buttons').style.display = 'none';
+            } else {
+                document.querySelector('.mobile-actions').style.display = 'none';
+                document.querySelector('.action-buttons').style.display = 'flex';
+            }
+        }
+        
+        // Check on load and resize
+        window.addEventListener('load', checkMobile);
+        window.addEventListener('resize', checkMobile);
+        
+        // Tab switching
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to current button
+                button.classList.add('active');
+                
+                // Show corresponding content
+                const contentId = 'content-' + button.id.split('-')[1];
+                document.getElementById(contentId).classList.add('active');
+            });
+        });
+    </script>
+{% endblock %}

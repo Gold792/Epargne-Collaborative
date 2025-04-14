@@ -1,0 +1,597 @@
+/* CSS pour la page "Mes cotisations" - mcotisations.css */
+
+/* Utilisation des mêmes variables CSS que dans le fichier original pour la cohérence */
+:root {
+    --primary-color: #1a5276; /* Bleu foncé - confiance, stabilité */
+    --secondary-color: #27ae60; /* Vert - croissance, prospérité */
+    --accent-color: #f39c12; /* Orange doré - valeur, richesse */
+    --light-color: #f5f7fa; /* Gris très clair - clarté */
+    --dark-color: #2c3e50; /* Bleu-gris foncé - sérieux */
+    --text-color: #333333; /* Gris foncé pour le texte */
+    --card-bg: #ffffff; /* Blanc pour le fond des cartes */
+    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); /* Ombre pour les cartes */
+    --hover-bg: rgba(236, 240, 241, 0.5); /* Couleur de survol */
+    --success-color: #2ecc71; /* Vert pour les succès */
+    --warning-color: #f39c12; /* Orange pour les avertissements */
+    --danger-color: #e74c3c; /* Rouge pour les alertes */
+    --disabled-bg: #f2f4f6; /* Gris clair pour les éléments désactivés */
+    --disabled-text: #999999; /* Gris pour le texte désactivé */
+    --form-border: #e2e8f0; /* Bordure pour les formulaires */
+    --input-focus: #3498db; /* Couleur de focus pour les inputs */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--light-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar - Repris du CSS original */
+.sidebar {
+    width: 280px;
+    background-color: var(--primary-color);
+    background-image: linear-gradient(to bottom, #1a5276, #154360);
+    color: white;
+    padding: 1.5rem 0;
+    height: 100vh;
+    position: fixed;
+    overflow-y: auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.sidebar-header {
+    padding: 0 1.5rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+    font-size: 1.6rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.5px;
+}
+
+.logo span {
+    color: var(--accent-color);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-top: 1.2rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.user-info:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.8rem;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.user-details {
+    font-size: 0.9rem;
+}
+
+.user-name {
+    font-weight: 600;
+}
+
+.user-status {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    display: inline-block;
+    background-color: rgba(46, 204, 113, 0.2);
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-top: 3px;
+}
+
+.sidebar-menu {
+    margin-top: 2rem;
+    list-style: none;
+}
+
+.sidebar-menu-item {
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 0.25rem;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(3px);
+}
+
+.sidebar-menu-item a {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.sidebar-menu-item.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-left: 4px solid var(--accent-color);
+}
+
+.sidebar-menu-item.active a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.menu-icon {
+    margin-right: 1rem;
+    width: 24px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.sidebar-footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-footer a {
+    background-color: #e74c3c;
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.3s;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.sidebar-footer a:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+/* Main Content - Repris et adapté */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 2rem;
+    transition: margin-left 0.3s ease;
+    background-color: #f9fafc;
+    min-height: 100vh;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--form-border);
+}
+
+.page-title {
+    font-size: 1.8rem;
+    color: var(--dark-color);
+    font-weight: 700;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn {
+    padding: 0.7rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.25s;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.btn-icon {
+    margin-right: 0.6rem;
+}
+
+.btn-primary {
+    background-color: var(--secondary-color);
+    color: white;
+    box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3);
+}
+
+.btn-primary:hover {
+    background-color: #219653;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(39, 174, 96, 0.4);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--dark-color);
+    border: 1px solid var(--form-border);
+}
+
+.btn-outline:hover {
+    background-color: #f5f7fa;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabs styles */
+.tabs-container {
+    margin-bottom: 1.5rem;
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--form-border);
+    padding-bottom: 0;
+}
+
+.tab-button {
+    padding: 0.8rem 1.5rem;
+    background: none;
+    border: none;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+.tab-button:hover {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.tab-button.active {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    opacity: 1;
+}
+
+/* Tab content */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Section containers */
+.section-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    padding: 1.8rem;
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.4rem;
+    color: var(--dark-color);
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-bottom: 0.8rem;
+}
+
+.section-title:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 2px;
+}
+
+/* Empty state styling */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: rgba(248, 249, 250, 0.7);
+    border-radius: 12px;
+    border: 1px dashed var(--form-border);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.empty-state h3 {
+    margin-bottom: 0.5rem;
+    color: var(--dark-color);
+}
+
+.empty-state p {
+    margin-bottom: 1.5rem;
+    color: #666;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Cards grid for created cotisations */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.cotisation-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid var(--form-border);
+}
+
+.cotisation-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.2rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    flex: 1;
+    line-height: 1.3;
+}
+
+.card-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 0.8rem;
+}
+
+.badge-blue {
+    background-color: rgba(26, 82, 118, 0.1);
+    color: var(--primary-color);
+}
+
+.badge-orange {
+    background-color: rgba(243, 156, 18, 0.1);
+    color: var(--accent-color);
+}
+
+.card-info {
+    margin-bottom: 1.2rem;
+}
+
+.info-item {
+    margin-bottom: 0.8rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.2rem;
+}
+
+.info-value {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.progress-container {
+    height: 8px;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    margin: 0.4rem 0;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary-color), #2ecc71);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    font-size: 0.85rem;
+    color: var(--secondary-color);
+    font-weight: 600;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+/* Table styles for participating cotisations */
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    background-color: white;
+}
+
+.cotisations-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cotisations-table th {
+    background-color: #f9fafc;
+    color: var(--dark-color);
+    font-weight: 600;
+    text-align: left;
+    padding: 1rem 1.5rem;
+    border-bottom: 2px solid var(--form-border);
+    font-size: 0.9rem;
+}
+
+.cotisations-table td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--form-border);
+    vertical-align: middle;
+}
+
+.cotisations-table tr:last-child td {
+    border-bottom: none;
+}
+
+.cotisations-table tr:hover td {
+    background-color: rgba(248, 249, 250, 0.7);
+}
+
+.title-cell {
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.amount-cell {
+    font-weight: 600;
+    color: var(--secondary-color);
+}
+
+.actions-cell {
+    text-align: right;
+}
+
+.table-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 992px) {
+    .cards-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 1000;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 1.5rem 1rem;
+    }
+    
+    .sidebar-toggle {
+        display: block;
+        background: none;
+        border: none;
+        color: var(--dark-color);
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        margin-right: 1rem;
+    }
+    
+    .header {
+        padding-bottom: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+    
+    .page-title {
+        font-size: 1.4rem;
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tab-buttons {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .tab-button {
+        width: 100%;
+        text-align: left;
+        border-left: 3px solid transparent;
+        border-bottom: none;
+        padding: 1rem;
+    }
+    
+    .tab-button.active {
+        border-left: 3px solid var(--primary-color);
+        border-bottom: none;
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+}
