@@ -6,6 +6,7 @@ use App\Repository\CotisationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: CotisationRepository::class)]
 class Cotisation
@@ -20,6 +21,10 @@ class Cotisation
     private ?string $titre = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\Choice(
+        choices: [self::TYPE_PERIODIQUE, self::TYPE_SOUSCRIPTION],
+        message: "Le type de cotisation doit être valide"
+    )]
     private ?string $typeCotisation = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -41,13 +46,25 @@ class Cotisation
     private ?\DateTimeInterface $dateDebut = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Assert\GreaterThan(
+        propertyPath: "dateDebut",
+        message: "La date de fin doit être postérieure à la date de début."
+    )]
     private ?\DateTimeInterface $dateFin = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Choice(
+        choices: [self::PERIODICITE_JOURNALIER, self::PERIODICITE_HEBDOMADAIRE, self::PERIODICITE_MENSUEL],
+        message: "La périodicité doit être valide"
+    )]
     private ?string $periodicite = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\Range(min: 1, max: 12, notInRangeMessage: "La fréquence doit être comprise entre 1 et 12")]
+    #[Assert\Range(
+        min: 1,
+        max: 12,
+        notInRangeMessage: "La fréquence doit être comprise entre 1 et 12"
+    )]
     private ?int $frequencePeriode = null;
 
     // Constantes pour les types de cotisation
@@ -77,7 +94,6 @@ class Cotisation
     public function setTitre(string $titre): static
     {
         $this->titre = $titre;
-
         return $this;
     }
 
@@ -89,7 +105,6 @@ class Cotisation
     public function setTypeCotisation(string $typeCotisation): static
     {
         $this->typeCotisation = $typeCotisation;
-
         return $this;
     }
 
@@ -101,7 +116,6 @@ class Cotisation
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -113,7 +127,6 @@ class Cotisation
     public function setMontantObjectif(float $montantObjectif): static
     {
         $this->montantObjectif = $montantObjectif;
-
         return $this;
     }
 
@@ -125,7 +138,6 @@ class Cotisation
     public function setMontantMinimum(float $montantMinimum): static
     {
         $this->montantMinimum = $montantMinimum;
-
         return $this;
     }
 
@@ -137,7 +149,6 @@ class Cotisation
     public function setMontantParEcheance(?float $montantParEcheance): static
     {
         $this->montantParEcheance = $montantParEcheance;
-
         return $this;
     }
 
@@ -149,7 +160,6 @@ class Cotisation
     public function setDateDebut(\DateTimeInterface $dateDebut): static
     {
         $this->dateDebut = $dateDebut;
-
         return $this;
     }
 
@@ -161,7 +171,6 @@ class Cotisation
     public function setDateFin(?\DateTimeInterface $dateFin): static
     {
         $this->dateFin = $dateFin;
-
         return $this;
     }
 
@@ -173,7 +182,6 @@ class Cotisation
     public function setPeriodicite(?string $periodicite): static
     {
         $this->periodicite = $periodicite;
-
         return $this;
     }
 
@@ -185,7 +193,6 @@ class Cotisation
     public function setFrequencePeriode(?int $frequencePeriode): static
     {
         $this->frequencePeriode = $frequencePeriode;
-
         return $this;
     }
 
@@ -216,5 +223,29 @@ class Cotisation
             $frequences[$i] = $i;
         }
         return $frequences;
+    }
+
+    // Méthode pour les validations personnalisées
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context): void
+    {
+        if ($this->typeCotisation === self::TYPE_PERIODIQUE) {
+            if ($this->montantParEcheance === null) {
+                $context->buildViolation("Le montant par échéance est requis pour une cotisation périodique.")
+                    ->atPath("montantParEcheance")
+                    ->addViolation();
+            }
+            if ($this->periodicite === null) {
+                $context->buildViolation("La périodicité est requise pour une cotisation périodique.")
+                    ->atPath("periodicite")
+                    ->addViolation();
+            }
+        }
+    }
+
+    // Pour faciliter l'affichage dans les formulaires
+    public function __toString(): string
+    {
+        return $this->titre ?? 'Cotisation';
     }
 }

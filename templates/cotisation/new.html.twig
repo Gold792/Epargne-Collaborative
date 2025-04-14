@@ -1,144 +1,371 @@
+{# templates/cotisation/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle Cotisation{% endblock %}
+{% block title %}Créer une cotisation - CollabÉpargne{% endblock %}
 
-{% block body %}
-    <div class="container mt-4">
-        <h1>Créer une nouvelle cotisation</h1>
-
-        {{ form_start(form) }}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Informations générales</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        {{ form_label(form.titre) }}
-                        {{ form_widget(form.titre) }}
-                        {{ form_errors(form.titre) }}
-                    </div>
-                    
-                    <div class="mb-3">
-                        {{ form_label(form.typeCotisation) }}
-                        {{ form_widget(form.typeCotisation) }}
-                        {{ form_errors(form.typeCotisation) }}
-                    </div>
-                    
-                    <div class="mb-3">
-                        {{ form_label(form.description) }}
-                        {{ form_widget(form.description) }}
-                        {{ form_errors(form.description) }}
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Montants</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                {{ form_label(form.montantObjectif) }}
-                                {{ form_widget(form.montantObjectif) }}
-                                {{ form_errors(form.montantObjectif) }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                {{ form_label(form.montantMinimum) }}
-                                {{ form_widget(form.montantMinimum) }}
-                                {{ form_errors(form.montantMinimum) }}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {% if form.montantParEcheance is defined %}
-                        <div class="mb-3">
-                            {{ form_label(form.montantParEcheance) }}
-                            {{ form_widget(form.montantParEcheance) }}
-                            {{ form_errors(form.montantParEcheance) }}
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Période</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                {{ form_label(form.dateDebut) }}
-                                {{ form_widget(form.dateDebut) }}
-                                {{ form_errors(form.dateDebut) }}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                {{ form_label(form.dateFin) }}
-                                {{ form_widget(form.dateFin) }}
-                                {{ form_errors(form.dateFin) }}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {% if form.periodicite is defined %}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form_label(form.periodicite) }}
-                                    {{ form_widget(form.periodicite) }}
-                                    {{ form_errors(form.periodicite) }}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    {{ form_label(form.frequencePeriode) }}
-                                    {{ form_widget(form.frequencePeriode) }}
-                                    {{ form_errors(form.frequencePeriode) }}
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="d-flex justify-content-between">
-                <a href="{{ path('app_cotisation_index') }}" class="btn btn-secondary">Retour à la liste</a>
-                <button type="submit" class="btn btn-success">Enregistrer</button>
-            </div>
-        {{ form_end(form) }}
-    </div>
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/cotisation.css') }}">
 {% endblock %}
 
 {% block javascripts %}
-{{ parent() }}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Récupérer les éléments radio de type de cotisation
-        const typeCotisationRadios = document.querySelectorAll('input[name="cotisation_type[typeCotisation]"]');
+    {{ parent() }}
+    <script src="{{ asset('js/cotisation.js') }}" defer></script>
+{% endblock %}
+
+{% block body %}
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">Collab<span>Épargne</span></div>
+            <div class="user-info">
+                <img src="{{ asset('image/profile.png') }}" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <div class="user-name">{{ app.user.nom }} {{ app.user.prenom }}</div>
+                    <div class="user-status">Membre actif</div>
+                </div>
+            </div>
+        </div>
         
-        // Fonction pour montrer/cacher les champs de périodicité
-        function togglePeriodicFields() {
-            const periodicContainer = document.getElementById('periodic-fields-container');
-            const isPeriodic = Array.from(typeCotisationRadios).find(radio => radio.checked)?.value === 'periodique';
-            
-            if (periodicContainer) {
-                periodicContainer.style.display = isPeriodic ? 'block' : 'none';
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <a href="{{ path('app_utilisateur') }}">
+                    <span class="menu-icon">🏠</span>
+                    <span>Tableau de bord</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item active">
+                <a href="{{ path('app_creation_cotisation') }}">
+                    <span class="menu-icon">➕</span>
+                    <span>Créer une cotisation</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#">
+                    <span class="menu-icon">👥</span>
+                    <span>Mes cotisations</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="#">
+                    <span class="menu-icon">📊</span>
+                    <span>Historique des contributions</span>
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
+                <a href="{{ path('app_echeance') }}">
+                    <span class="menu-icon">📅</span>
+                    <span>Échéances</span>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="sidebar-menu-item">
+                <a href="{{ path('app_logout') }}" class="btn btn-danger">
+                    <span class="menu-icon">🚪</span>
+                    <span>Déconnexion</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <button class="sidebar-toggle" id="sidebar-toggle">≡</button>
+            <h1 class="page-title">Créer une cotisation</h1>
+            <div class="action-buttons">
+                <a href="{{ path('app_utilisateur') }}" class="btn btn-outline">
+                    <span class="btn-icon">↩️</span>
+                    Retour au tableau de bord
+                </a>
+            </div>
+        </div>
+        
+        <!-- Mobile Action Buttons -->
+        <div class="mobile-actions">
+            <a href="{{ path('app_utilisateur') }}" class="btn btn-outline" style="width: 100%; margin-bottom: 1rem;">
+                <span class="btn-icon">↩️</span>
+                Retour au tableau de bord
+            </a>
+        </div>
+        
+        <!-- Form Container -->
+        <div class="form-container">
+            {{ form_start(form, {'attr': {'class': 'create-form'}}) }}
+                <div class="form-section">
+                    <h2>Informations générales</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.titre.vars.id }}">Titre de la cotisation <span class="required">*</span></label>
+                            {{ form_widget(form.titre, {'attr': {'placeholder': 'Ex: Voyage au Maroc, Cadeau d\'anniversaire...'}}) }}
+                            {{ form_errors(form.titre) }}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.typeCotisation.vars.id }}">Type de cotisation <span class="required">*</span></label>
+                            {{ form_widget(form.typeCotisation) }}
+                            {{ form_errors(form.typeCotisation) }}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.description.vars.id }}">Description</label>
+                        {{ form_widget(form.description, {'attr': {'rows': '4', 'placeholder': 'Décrivez l\'objectif de cette cotisation, comment les fonds seront utilisés...'}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.montantObjectif.vars.id }}">Montant objectif (FCFA) <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                {{ form_widget(form.montantObjectif, {'attr': {'min': '1', 'placeholder': 'Ex: 500000'}}) }}
+                                <span class="input-icon">FCFA</span>
+                            </div>
+                            <small class="form-helper">Montant total à atteindre pour cette cotisation</small>
+                            {{ form_errors(form.montantObjectif) }}
+                        </div>
+                        
+                        <div class="form-group" id="montantEcheanceGroup">
+                            <label for="{{ form.montantParEcheance.vars.id }}">Montant par échéance (FCFA) <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                {{ form_widget(form.montantParEcheance, {'attr': {'min': '1', 'placeholder': 'Ex: 25000'}}) }}
+                                <span class="input-icon">FCFA</span>
+                            </div>
+                            <small class="form-helper">Montant à verser à chaque période</small>
+                            {{ form_errors(form.montantParEcheance) }}
+                        </div>
+                        
+                        <div class="form-group" id="montantMinimumGroup" style="display: none;">
+                            <label for="{{ form.montantMinimum.vars.id }}">Montant minimum (FCFA) <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                {{ form_widget(form.montantMinimum, {'attr': {'min': '1', 'placeholder': 'Ex: 10000'}}) }}
+                                <span class="input-icon">FCFA</span>
+                            </div>
+                            <small class="form-helper">Montant minimum accepté par contribution</small>
+                            {{ form_errors(form.montantMinimum) }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section" id="periodeSection">
+                    <h2>Période de cotisation</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.dateDebut.vars.id }}">Date de début <span class="required">*</span></label>
+                            {{ form_widget(form.dateDebut) }}
+                            <small class="form-helper">Date à laquelle la cotisation commence</small>
+                            {{ form_errors(form.dateDebut) }}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.dateFin.vars.id }}">Date de fin</label>
+                            <div class="date-fin-container">
+                                {{ form_widget(form.dateFin) }}
+                                <div class="checkbox">
+                                    <input type="checkbox" id="sansDateFin" name="sansDateFin">
+                                    <label for="sansDateFin">Pas de date de fin</label>
+                                </div>
+                            </div>
+                            <small class="form-helper">Date à laquelle la cotisation se termine</small>
+                            {{ form_errors(form.dateFin) }}
+                        </div>
+                    </div>
+                    
+                    <div class="form-row" id="periodOptions">
+                        <div class="form-group">
+                            <label for="{{ form.periodicite.vars.id }}">Périodicité <span class="required">*</span></label>
+                            {{ form_widget(form.periodicite) }}
+                            <small class="form-helper">À quelle fréquence les cotisations sont collectées</small>
+                            {{ form_errors(form.periodicite) }}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.frequencePeriode.vars.id }}">Fréquence de période <span class="required">*</span></label>
+                            {{ form_widget(form.frequencePeriode) }}
+                            <small class="form-helper">Nombre de périodes entre chaque collecte</small>
+                            {{ form_errors(form.frequencePeriode) }}
+                        </div>
+                    </div>
+                    
+                    <div class="form-info" id="frequenceExplication">
+                        <div class="info-icon">ℹ️</div>
+                        <div class="info-text">Vous avez sélectionné une cotisation <strong><span class="frequency-type">mensuelle</span></strong> tous les <strong><span class="frequency-value">1</span> <span class="frequency-unit">mois</span></strong>.</div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="location.href='{{ path('app_utilisateur') }}'">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-icon">✓</span>
+                        Créer la cotisation
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialisation de la date du jour pour le champ de date de début
+            const dateDebutInput = document.getElementById('{{ form.dateDebut.vars.id }}');
+            if (!dateDebutInput.value) {
+                const today = new Date();
+                const formattedDate = today.toISOString().substr(0, 10);
+                dateDebutInput.value = formattedDate;
             }
-        }
-        
-        // Ajouter des écouteurs d'événements aux radios
-        typeCotisationRadios.forEach(radio => {
-            radio.addEventListener('change', togglePeriodicFields);
+            
+            // Initialisation de la date de fin (par défaut: aujourd'hui + 3 mois)
+            const dateFinInput = document.getElementById('{{ form.dateFin.vars.id }}');
+            if (!dateFinInput.value) {
+                const nextMonth = new Date();
+                nextMonth.setMonth(nextMonth.getMonth() + 3);
+                const formattedNextMonth = nextMonth.toISOString().substr(0, 10);
+                dateFinInput.value = formattedNextMonth;
+            }
+            
+            // Gestion du toggle sidebar pour mobile
+            document.getElementById('sidebar-toggle').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('active');
+            });
+            
+            // Détection mobile pour UI responsive
+            function checkMobile() {
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.mobile-actions').style.display = 'block';
+                    document.querySelector('.action-buttons').style.display = 'none';
+                } else {
+                    document.querySelector('.mobile-actions').style.display = 'none';
+                    document.querySelector('.action-buttons').style.display = 'flex';
+                }
+            }
+            
+            // Vérifier au chargement et au redimensionnement
+            checkMobile();
+            window.addEventListener('resize', checkMobile);
+            
+            // Gestion du type de cotisation et affichage conditionnel des champs
+            const typeCotisationSelect = document.getElementById('{{ form.typeCotisation.vars.id }}');
+            const montantEcheanceGroup = document.getElementById('montantEcheanceGroup');
+            const montantMinimumGroup = document.getElementById('montantMinimumGroup');
+            const periodOptions = document.getElementById('periodOptions');
+            const frequenceExplication = document.getElementById('frequenceExplication');
+            
+            // Fonction pour mettre à jour l'affichage en fonction du type de cotisation
+            function updateCotisationType() {
+                const type = typeCotisationSelect.value;
+                
+                if (type === 'periodique') {
+                    montantEcheanceGroup.style.display = 'block';
+                    montantMinimumGroup.style.display = 'none';
+                    periodOptions.style.display = 'flex';
+                    frequenceExplication.style.display = 'flex';
+                    document.getElementById('periodeSection').classList.remove('souscription-mode');
+                    
+                    // Rendre obligatoire le montant par échéance
+                    document.getElementById('{{ form.montantParEcheance.vars.id }}').required = true;
+                    document.getElementById('{{ form.montantMinimum.vars.id }}').required = false;
+                } else {
+                    montantEcheanceGroup.style.display = 'none';
+                    montantMinimumGroup.style.display = 'block';
+                    periodOptions.style.display = 'none';
+                    frequenceExplication.style.display = 'none';
+                    document.getElementById('periodeSection').classList.add('souscription-mode');
+                    
+                    // Rendre obligatoire le montant minimum
+                    document.getElementById('{{ form.montantParEcheance.vars.id }}').required = false;
+                    document.getElementById('{{ form.montantMinimum.vars.id }}').required = true;
+                }
+            }
+            
+            // Appliquer au chargement et lors des changements
+            updateCotisationType();
+            typeCotisationSelect.addEventListener('change', updateCotisationType);
+            
+            // Gestion de la case à cocher "Pas de date de fin"
+            const sansDateFinCheckbox = document.getElementById('sansDateFin');
+            let savedDateFinValue = dateFinInput.value; // Pour stocker la valeur temporairement
+            
+            sansDateFinCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    // Sauvegarder la valeur actuelle avant de désactiver
+                    savedDateFinValue = dateFinInput.value;
+                    
+                    // Désactiver le champ
+                    dateFinInput.disabled = true;
+                    dateFinInput.classList.add('disabled');
+                    dateFinInput.value = '';
+                    dateFinInput.required = false;
+                } else {
+                    // Réactiver le champ et restaurer la valeur
+                    dateFinInput.disabled = false;
+                    dateFinInput.classList.remove('disabled');
+                    
+                    // Si une valeur était sauvegardée, la restaurer
+                    if (savedDateFinValue) {
+                        dateFinInput.value = savedDateFinValue;
+                    } else {
+                        // Sinon mettre la date par défaut (aujourd'hui + 3 mois)
+                        const nextMonth = new Date();
+                        nextMonth.setMonth(nextMonth.getMonth() + 3);
+                        dateFinInput.value = nextMonth.toISOString().substr(0, 10);
+                    }
+                }
+            });
+            
+            // Mettre à jour l'explication de fréquence
+            function updateFrequenceExplication() {
+                const periodicite = document.getElementById('{{ form.periodicite.vars.id }}').value;
+                const frequence = document.getElementById('{{ form.frequencePeriode.vars.id }}').value;
+                
+                let typeText, unitText;
+                
+                switch(periodicite) {
+                    case 'journalier':
+                        typeText = 'journalière';
+                        unitText = frequence > 1 ? 'jours' : 'jour';
+                        break;
+                    case 'hebdomadaire':
+                        typeText = 'hebdomadaire';
+                        unitText = frequence > 1 ? 'semaines' : 'semaine';
+                        break;
+                    case 'mensuel':
+                        typeText = 'mensuelle';
+                        unitText = frequence > 1 ? 'mois' : 'mois';
+                        break;
+                    default:
+                        typeText = 'personnalisée';
+                        unitText = 'période(s)';
+                }
+                
+                document.querySelector('.frequency-type').textContent = typeText;
+                document.querySelector('.frequency-value').textContent = frequence;
+                document.querySelector('.frequency-unit').textContent = unitText;
+            }
+            
+            // Initialiser l'explication de fréquence
+            updateFrequenceExplication();
+            
+            // Écouter les changements de périodicité et de fréquence
+            document.getElementById('{{ form.periodicite.vars.id }}').addEventListener('change', updateFrequenceExplication);
+            document.getElementById('{{ form.frequencePeriode.vars.id }}').addEventListener('change', updateFrequenceExplication);
+            
+            // Validation de dates (s'assurer que la date de fin est après la date de début)
+            const form = document.querySelector('.create-form');
+            form.addEventListener('submit', function(event) {
+                // Ne vérifier que si la date de fin est activée
+                if (!sansDateFinCheckbox.checked && dateFinInput.value) {
+                    const dateDebut = new Date(dateDebutInput.value);
+                    const dateFin = new Date(dateFinInput.value);
+                    
+                    if (dateFin <= dateDebut) {
+                        event.preventDefault();
+                        alert('La date de fin doit être postérieure à la date de début.');
+                        dateFinInput.focus();
+                    }
+                }
+            });
         });
-        
-        // Appeler la fonction une fois au chargement de la page
-        togglePeriodicFields();
-    });
-</script>
+    </script>
 {% endblock %}
