@@ -258,7 +258,7 @@ body {
     font-size: 0.85rem;
 }
 
-/* Form Containers */
+/* Form Containers - Amélioré */
 .form-container {
     background-color: var(--card-bg);
     border-radius: 12px;
@@ -267,6 +267,8 @@ body {
     margin-bottom: 2rem;
     border: 1px solid var(--form-border);
     transition: all 0.3s ease;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .form-container:hover {
@@ -311,18 +313,27 @@ body {
     margin-bottom: 1rem;
 }
 
+/* Améliorations des groupes de formulaire */
 .form-group {
     margin-bottom: 1.8rem;
     transition: all 0.3s ease;
+    position: relative;
 }
 
+/* Amélioration des rangées de formulaire */
 .form-row {
     display: flex;
     gap: 2rem;
+    margin-bottom: 1.2rem;
 }
 
 .form-row .form-group {
     flex: 1;
+}
+
+/* Première rangée (titre et type de cotisation) */
+.form-row:first-of-type {
+    margin-bottom: 1.5rem;
 }
 
 .form-helper {
@@ -354,6 +365,7 @@ label {
     margin-left: 2px;
 }
 
+/* Améliorations des champs de saisie */
 input[type="text"],
 input[type="number"],
 input[type="date"],
@@ -381,6 +393,7 @@ textarea:focus {
     outline: none;
     border-color: var(--input-focus);
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+    transform: translateY(-1px);
 }
 
 input:disabled,
@@ -391,8 +404,10 @@ input.disabled {
     color: var(--disabled-text);
     cursor: not-allowed;
     border-color: #e0e0e0;
+    opacity: 0.7;
 }
 
+/* Amélioration de l'apparence des inputs avec icônes */
 .input-with-icon {
     position: relative;
 }
@@ -411,9 +426,10 @@ input.disabled {
 }
 
 .input-with-icon input {
-    padding-right: 65px;
+    padding-right: 75px;
 }
 
+/* Amélioration de la case à cocher "Pas de date de fin" */
 .checkbox-container {
     display: flex;
     align-items: center;
@@ -443,8 +459,10 @@ input.disabled {
     margin-bottom: 0;
     font-size: 0.9rem;
     cursor: pointer;
+    font-weight: 500;
 }
 
+/* Amélioration des boutons d'action */
 .form-actions {
     display: flex;
     justify-content: flex-end;
@@ -452,63 +470,7 @@ input.disabled {
     margin-top: 2.5rem;
 }
 
-/* Type de cotisation toggle */
-.type-toggle {
-    display: flex;
-    background-color: var(--light-color);
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid #ddd;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    margin-bottom: 1.5rem;
-}
-
-.type-option {
-    flex: 1;
-    padding: 1.3rem 1rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    background-color: var(--light-color);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.type-option.active {
-    background-color: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-}
-
-.type-option.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
-}
-
-.type-icon {
-    font-size: 1.8rem;
-    margin-bottom: 0.8rem;
-    color: var(--primary-color);
-}
-
-.type-label {
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-    color: var(--dark-color);
-}
-
-.type-desc {
-    font-size: 0.8rem;
-    color: #6c7a89;
-}
-
-/* Date fin container styles */
+/* Date fin container styles - Amélioré */
 .date-fin-container {
     display: flex;
     flex-direction: column;
@@ -518,7 +480,7 @@ input.disabled {
     margin-bottom: 0.5rem;
 }
 
-/* Frequency explanation info box */
+/* Amélioration de l'explication de fréquence */
 .form-info {
     display: flex;
     background-color: rgba(52, 152, 219, 0.08);
@@ -544,14 +506,14 @@ input.disabled {
     color: var(--dark-color);
 }
 
-/* Souscription mode modifiers */
+/* Améliorations du mode souscription */
 .souscription-mode .period-options {
     opacity: 0.5;
     pointer-events: none;
     transition: opacity 0.3s;
 }
 
-/* Select styling improvements */
+/* Améliorations du style des selects */
 select {
     appearance: none; /* Remove default arrow */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236c7a89' viewBox='0 0 16 16'%3E%3Cpath d='M8 11.5l-6-6 1.5-1.5L8 8.5l4.5-4.5L14 5.5l-6 6z'/%3E%3C/svg%3E");
@@ -561,13 +523,13 @@ select {
     padding-right: 40px;
 }
 
-/* Textarea improvements */
+/* Améliorations des textareas */
 textarea {
     min-height: 120px;
     resize: vertical;
 }
 
-/* Animation classes */
+/* Animation optimisée */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -577,184 +539,105 @@ textarea {
     animation: fadeIn 0.4s ease forwards;
 }
 
-/* Error handling styles */
-.is-invalid {
-    border-color: var(--danger-color) !important;
-}
-
-.invalid-feedback {
-    color: var(--danger-color);
-    font-size: 0.8rem;
-    margin-top: 0.3rem;
-    display: block;
-}
-
-/* Success styles */
-.is-valid {
-    border-color: var(--success-color) !important;
-}
-
-.valid-feedback {
-    color: var(--success-color);
-    font-size: 0.8rem;
-    margin-top: 0.3rem;
-    display: block;
-}
-
-/* Tooltip styles */
-.tooltip {
-    position: relative;
-    display: inline-block;
-    margin-left: 0.5rem;
-    cursor: help;
-}
-
-.tooltip-icon {
-    color: #6c7a89;
-    font-size: 0.9rem;
-    border: 1px solid #ddd;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.tooltip-text {
-    visibility: hidden;
-    width: 220px;
-    background-color: var(--dark-color);
-    color: white;
-    text-align: center;
-    border-radius: 6px;
-    padding: 0.8rem;
-    position: absolute;
-    z-index: 1;
-    bottom: 125%;
-    left: 50%;
-    margin-left: -110px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    font-size: 0.85rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.tooltip:hover .tooltip-text {
-    visibility: visible;
+/* Amélioration des transitions entre états du formulaire */
+/* Transitions améliorées pour les types de cotisation */
+#montantEcheanceGroup,
+#montantMinimumGroup {
     opacity: 1;
+    max-height: 200px;
+    transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.4s ease;
+    overflow: hidden;
 }
 
-/* Loading indicators */
-.loading-spinner {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 1s ease-in-out infinite;
-    margin-right: 10px;
-}
-
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
-/* Switch button for toggles */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-    margin-left: 10px;
-}
-
-.switch input {
+#montantEcheanceGroup[style*="display: none"],
+#montantMinimumGroup[style*="display: none"] {
+    max-height: 0;
     opacity: 0;
-    width: 0;
-    height: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 24px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: var(--secondary-color);
-}
-
-input:focus + .slider {
-    box-shadow: 0 0 1px var(--secondary-color);
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-
-/* Improved card styles for various sections */
-.info-card {
-    background-color: white;
+/* Améliorations pour la section période */
+#periodeSection {
+    padding: 1.8rem;
+    background-color: rgba(248, 249, 250, 0.7);
     border-radius: 10px;
-    box-shadow: var(--card-shadow);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
     border: 1px solid var(--form-border);
-    transition: all 0.3s;
+    transition: all 0.3s ease;
 }
 
-.info-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+#periodeSection:hover {
+    background-color: rgba(248, 249, 250, 1);
 }
 
-/* Date row specific styling */
+/* Amélioration de la rangée des dates */
 .date-row {
-    background-color: rgba(236, 240, 241, 0.2);
-    padding: 1.5rem;
-    border-radius: 10px;
-    margin-bottom: 1.5rem;
+    padding: 1.2rem;
+    background-color: white;
+    border-radius: 8px;
     border: 1px solid var(--form-border);
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.8rem;
 }
 
-/* Date fin group specific styling */
-.date-fin-group {
-    position: relative;
+.date-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
 }
 
-/* Responsive styling */
+/* Amélioration du style des options de période */
+.period-options {
+    display: flex;
+    gap: 2rem;
+    transition: opacity 0.3s ease;
+}
+
+.period-options .form-group {
+    flex: 1;
+}
+
+/* Amélioration de l'apparence du champ désactivé pour la date de fin */
+#dateFin.disabled {
+    background-color: var(--disabled-bg);
+    color: var(--disabled-text);
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Animation pour l'astérisque des champs obligatoires */
+.required {
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive styling - Optimisé */
 @media (max-width: 992px) {
+    .form-container {
+        padding: 1.8rem;
+    }
+    
     .form-row {
         flex-direction: column;
         gap: 1.5rem;
     }
     
-    .form-container {
-        padding: 1.8rem;
+    .date-row {
+        flex-direction: column;
+        padding: 1.2rem;
     }
     
-    .date-row {
-        padding: 1.2rem;
+    .period-options {
+        flex-direction: column;
+        gap: 1.5rem;
     }
 }
 
@@ -787,6 +670,7 @@ input:checked + .slider:before {
     .header {
         padding-bottom: 1rem;
         flex-wrap: wrap;
+        margin-bottom: 1.5rem;
     }
     
     .page-title {
@@ -797,14 +681,6 @@ input:checked + .slider:before {
     
     .form-section h2 {
         font-size: 1.2rem;
-    }
-    
-    .type-toggle {
-        flex-direction: column;
-    }
-    
-    .type-option {
-        padding: 1rem;
     }
     
     .form-actions {
@@ -818,169 +694,47 @@ input:checked + .slider:before {
     .form-container {
         padding: 1.5rem 1rem;
     }
-}
-
-/* Focus state and active state improvements */
-input:focus, 
-select:focus, 
-textarea:focus {
-    transform: translateY(-1px);
-}
-
-/* Better form transitions */
-.form-group {
-    opacity: 1;
-    transform: translateY(0);
-    transition: opacity 0.3s, transform 0.3s;
-}
-
-.form-group.hidden {
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-    position: absolute;
-}
-
-/* Mobile Action Buttons */
-.mobile-actions {
-    margin-bottom: 1rem;
-}
-
-/* Toast notification styles */
-.toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 300px;
-    padding: 1rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    border-left: 4px solid var(--success-color);
-    animation: slideIn 0.3s forwards;
-}
-
-.toast-success {
-    border-left-color: var(--success-color);
-}
-
-.toast-error {
-    border-left-color: var(--danger-color);
-}
-
-.toast-warning {
-    border-left-color: var(--warning-color);
-}
-
-.toast-icon {
-    margin-right: 0.8rem;
-    font-size: 1.2rem;
-}
-
-.toast-message {
-    flex-grow: 1;
-}
-
-.toast-close {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    color: #999;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
+    
+    .checkbox-container {
+        width: 100%;
+        justify-content: flex-start;
     }
 }
 
-@keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-}
-
-/* Buttons with loading state */
-.btn.is-loading {
+/* Amélioration pour le comportement du checkbox "Pas de date de fin" */
+.date-fin-group {
     position: relative;
-    color: transparent !important;
 }
 
-.btn.is-loading::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: 50%;
-    left: 50%;
-    margin-top: -10px;
-    margin-left: -10px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    border-top-color: white;
-    animation: spin 0.8s linear infinite;
+.checkbox-container {
+    position: relative;
+    margin-top: 0.5rem;
 }
 
-/* Improved focus visibility for accessibility */
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-button:focus-visible {
-    outline: 2px solid var(--primary-color);
-    outline-offset: 2px;
-}
-
-/* Card hover effect */
-.form-container {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.form-container:hover {
-    transform: translateY(-5px);
-}
-
-/* Focus within effect for form groups */
-.form-group:focus-within label {
-    color: var(--primary-color);
-}
-
-/* Required field asterisk animation */
-.required {
-    display: inline-block;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
-
-/* Better transitions between form states */
-#montantEcheanceGroup,
-#montantMinimumGroup {
-    transition: all 0.5s ease;
-    height: auto;
+/* Modification du script JavaScript pour une meilleure transition */
+/* Ces classes seront utilisées par le JS */
+.fade-out {
+    opacity: 0;
+    max-height: 0;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
 }
 
-#montantEcheanceGroup[style*="display: none"],
-#montantMinimumGroup[style*="display: none"] {
-    height: 0;
-    padding: 0;
-    margin: 0;
+.fade-in {
+    opacity: 1;
+    max-height: 200px; /* Valeur suffisamment grande */
+    transition: opacity 0.4s ease, max-height 0.4s ease;
+}
+
+/* Amélioration de l'affichage du bouton mobile */
+.mobile-actions {
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.mobile-actions .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

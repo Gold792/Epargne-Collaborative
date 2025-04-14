@@ -4,7 +4,7 @@
 
 {% block body %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('css/cotisation.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/ccotisation.css') }}">
 {% endblock %}
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
@@ -53,7 +53,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <div class="header">
-            <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
+            <button class="sidebar-toggle" id="sidebar-toggle">➕</button>
             <h1 class="page-title">Créer une cotisation</h1>
             <div class="action-buttons">
                 <a href="{{ path('app_utilisateur') }}" class="btn btn-outline">
@@ -91,7 +91,8 @@
                                 <option value="souscription">Souscription - Contributions libres avec un montant minimum</option>
                             </select>
                         </div>
-
+                    </div>
+                    
                     <div class="form-group">
                         <label for="description">Description</label>
                         <textarea id="description" name="description" rows="4" placeholder="Décrivez l'objectif de cette cotisation, comment les fonds seront utilisés..."></textarea>
