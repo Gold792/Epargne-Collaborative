@@ -26,23 +26,19 @@
             </li>
             <li class="sidebar-menu-item active">
                 <span class="menu-icon">➕</span>
-                <span><a href="{{ path('app_creation_cotisation') }}" style="color: #fff; text-decoration: none;">Créer une cotisation</a></span>
+                <span><a href="{{ path('app_creation_cotisation') }}">Créer une cotisation</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">👥</span>
-                <span><a href="#" style="color: #fff; text-decoration: none;">Mes cotisations</a></span>
-            </li>
-            <li class="sidebar-menu-item">
-                <span class="menu-icon">💰</span>
-                <span><a href="#" style="color: #fff; text-decoration: none;">Mes épargnes</a></span>
+                <span><a href="#">Mes cotisations</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">📊</span>
-                <span><a href="#" style="color: #fff; text-decoration: none;">Historique des contributions</a></span>
+                <span><a href="#">Historique des contributions</a></span>
             </li>
             <li class="sidebar-menu-item">
                 <span class="menu-icon">📅</span>
-                <span><a href="{{ path('app_echeance') }}" style="color: #fff; text-decoration: none;">Échéances</a></span>
+                <span><a href="{{ path('app_echeance') }}">Échéances</a></span>
             </li>
         </ul>
         
@@ -82,116 +78,111 @@
             <form method="post" action="{{ path('app_creation_cotisation') }}" class="create-form">
                 <div class="form-section">
                     <h2>Informations générales</h2>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="titre">Titre de la cotisation <span class="required">*</span></label>
+                            <input type="text" id="titre" name="titre" required placeholder="Ex: Voyage au Maroc, Cadeau d'anniversaire...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="typeCotisation">Type de cotisation <span class="required">*</span></label>
+                            <select id="typeCotisation" name="typeCotisation" required>
+                                <option value="periodique" selected>Périodique - Cotisations régulières avec un montant fixe</option>
+                                <option value="souscription">Souscription - Contributions libres avec un montant minimum</option>
+                            </select>
+                        </div>
+
                     <div class="form-group">
-                        <label for="titre">Titre de la cotisation</label>
-                        <input type="text" id="titre" name="titre" required placeholder="Ex: Voyage au Maroc, Cadeau d'anniversaire...">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="initiateur">Nom de l'initiateur du projet</label>
-                        <input type="text" id="initiateur" name="initiateur" required placeholder="Ex: Jean Dupont">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="4" placeholder="Décrivez l'objectif de cette cotisation, comment les fonds seront utilisés..."></textarea>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="montantObjectif">Montant objectif (FCFA)</label>
-                            <input type="number" id="montantObjectif" name="montantObjectif" min="1" required placeholder="Ex: 500000">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="montantEcheance">Montant par échéance (FCFA)</label>
-                            <input type="number" id="montantEcheance" name="montantEcheance" min="1" required placeholder="Ex: 25000">
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-section">
-                    <h2>Période de cotisation</h2>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="dateDebut">Date de début</label>
-                            <input type="date" id="dateDebut" name="dateDebut" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="dateFin">Date de fin (optionnelle)</label>
-                            <input type="date" id="dateFin" name="dateFin">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="periodicite">Périodicité</label>
-                        <select id="periodicite" name="periodicite" required>
-                            <option value="hebdomadaire">Hebdomadaire</option>
-                            <option value="mensuelle" selected>Mensuelle</option>
-                            <option value="trimestrielle">Trimestrielle</option>
-                            <option value="personnalisee">Personnalisée</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group custom-periodicity" style="display: none;">
-                        <label for="joursPeriodicite">Nombre de jours entre chaque échéance</label>
-                        <input type="number" id="joursPeriodicite" name="joursPeriodicite" min="1" placeholder="Ex: 15">
-                    </div>
-                </div>
-                
-                <div class="form-section">
-                    <h2>Membres</h2>
-                    <div class="form-group">
-                        <label for="searchMember">Rechercher un membre</label>
-                        <div class="search-input-container">
-                            <input type="text" id="searchMember" placeholder="Nom, prénom ou numéro de téléphone">
-                            <button type="button" class="search-btn">🔍</button>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Membres sélectionnés</label>
-                        <div class="tag-input-container">
-                            <div class="tags-container">
-                                <!-- Les tags seront ajoutés ici dynamiquement -->
+                            <label for="montantObjectif">Montant objectif (FCFA) <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <input type="number" id="montantObjectif" name="montantObjectif" min="1" required placeholder="Ex: 500000">
+                                <span class="input-icon">FCFA</span>
                             </div>
-                            <input type="hidden" id="membres" name="membres" value="">
+                            <small class="form-helper">Montant total à atteindre pour cette cotisation</small>
                         </div>
-                    </div>
-                    
-                    <div class="members-list-container">
-                        <h3>Membres disponibles</h3>
-                        <div class="members-list">
-                            {% if utilisateurs is defined and utilisateurs|length > 0 %}
-                                {% for utilisateur in utilisateurs %}
-                                    <div class="member-item" data-id="{{ utilisateur.id }}" data-nom="{{ utilisateur.nom }}" data-prenom="{{ utilisateur.prenom }}" data-telephone="{{ utilisateur.telephone }}">
-                                        <div class="member-info">
-                                            <div class="member-name">{{ utilisateur.nom }} {{ utilisateur.prenom }}</div>
-                                            <div class="member-phone">{{ utilisateur.telephone }}</div>
-                                        </div>
-                                        <button type="button" class="add-member-btn">+</button>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="empty-members">
-                                    <p>Aucun autre membre n'est disponible</p>
-                                </div>
-                            {% endif %}
+                        
+                        <div class="form-group" id="montantEcheanceGroup">
+                            <label for="montantEcheance">Montant par échéance (FCFA) <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <input type="number" id="montantEcheance" name="montantEcheance" min="1" required placeholder="Ex: 25000">
+                                <span class="input-icon">FCFA</span>
+                            </div>
+                            <small class="form-helper">Montant à verser à chaque période</small>
+                        </div>
+                        
+                        <div class="form-group" id="montantMinimumGroup" style="display: none;">
+                            <label for="montantMinimum">Montant minimum (FCFA) <span class="required">*</span></label>
+                            <div class="input-with-icon">
+                                <input type="number" id="montantMinimum" name="montantMinimum" min="1" required placeholder="Ex: 10000">
+                                <span class="input-icon">FCFA</span>
+                            </div>
+                            <small class="form-helper">Montant minimum accepté par contribution</small>
                         </div>
                     </div>
                 </div>
                 
-                <div class="form-section">
-                    <h2>Options supplémentaires</h2>
-                    <div class="form-group checkbox">
-                        <input type="checkbox" id="rappelAuto" name="rappelAuto" checked>
-                        <label for="rappelAuto">Activer les rappels automatiques</label>
+                <div class="form-section" id="periodeSection">
+                    <h2>Période de cotisation</h2>
+                    <div class="form-row date-row">
+                        <div class="form-group">
+                            <label for="dateDebut">Date de début <span class="required">*</span></label>
+                            <input type="date" id="dateDebut" name="dateDebut" required>
+                            <small class="form-helper">Date à laquelle la cotisation commence</small>
+                        </div>
+                        
+                        <div class="form-group date-fin-group">
+                            <label for="dateFin">Date de fin</label>
+                            <div class="date-fin-container">
+                                <input type="date" id="dateFin" name="dateFin">
+                                <div class="checkbox-container">
+                                    <input type="checkbox" id="sansDateFin" name="sansDateFin">
+                                    <label for="sansDateFin">Pas de date de fin</label>
+                                </div>
+                            </div>
+                            <small class="form-helper">Date à laquelle la cotisation se termine</small>
+                        </div>
                     </div>
                     
-                    <div class="form-group checkbox">
-                        <input type="checkbox" id="cotisationPublique" name="cotisationPublique">
-                        <label for="cotisationPublique">Rendre cette cotisation publique</label>
+                    <div class="form-row period-options" id="periodOptions">
+                        <div class="form-group">
+                            <label for="periodicite">Périodicité <span class="required">*</span></label>
+                            <select id="periodicite" name="periodicite" required>
+                                <option value="journalier">Journalier</option>
+                                <option value="hebdomadaire">Hebdomadaire</option>
+                                <option value="mensuel" selected>Mensuel</option>
+                            </select>
+                            <small class="form-helper">À quelle fréquence les cotisations sont collectées</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="frequence">Fréquence de période <span class="required">*</span></label>
+                            <select id="frequence" name="frequence" required>
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                            <small class="form-helper">Nombre de périodes entre chaque collecte</small>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="description">Description (optionnelle)</label>
-                        <textarea id="description" name="description" rows="4" placeholder="Décrivez l'objectif de cette cotisation..."></textarea>
+                    <div class="form-info" id="frequenceExplication">
+                        <div class="info-icon">ℹ️</div>
+                        <div class="info-text">Vous avez sélectionné une cotisation <strong><span class="frequency-type">mensuelle</span></strong> tous les <strong><span class="frequency-value">1</span> <span class="frequency-unit">mois</span></strong>.</div>
                     </div>
                 </div>
                 
@@ -207,19 +198,28 @@
     </div>
     
     <script>
+        // Initialiser la date du jour
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const formattedDate = today.toISOString().substr(0, 10);
+            document.getElementById('dateDebut').value = formattedDate;
+            
+            // Calculer date par défaut pour la fin (aujourd'hui + 3 mois)
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 3);
+            const formattedNextMonth = nextMonth.toISOString().substr(0, 10);
+            document.getElementById('dateFin').value = formattedNextMonth;
+            
+            // Initialiser l'explication de fréquence
+            updateFrequenceExplication();
+            
+            // S'assurer que tous les champs required sont correctement définis
+            toggleRequiredFields();
+        });
+        
         // Toggle sidebar on mobile
         document.getElementById('sidebar-toggle').addEventListener('click', function() {
             document.getElementById('sidebar').classList.toggle('active');
-        });
-        
-        // Show/hide custom periodicity based on select
-        document.getElementById('periodicite').addEventListener('change', function() {
-            const customPeriodicity = document.querySelector('.custom-periodicity');
-            if (this.value === 'personnalisee') {
-                customPeriodicity.style.display = 'block';
-            } else {
-                customPeriodicity.style.display = 'none';
-            }
         });
         
         // Mobile detection for responsive UI
@@ -237,96 +237,94 @@
         window.addEventListener('load', checkMobile);
         window.addEventListener('resize', checkMobile);
         
-        // Handle members selection
-        const membresInput = document.getElementById('membres');
-        const tagsContainer = document.querySelector('.tags-container');
-        const searchInput = document.getElementById('searchMember');
-        const membersList = document.querySelector('.members-list');
-        const memberItems = document.querySelectorAll('.member-item');
+        // Toggle type de cotisation
+       // Event listener pour le changement de type de cotisation
+document.getElementById('typeCotisation').addEventListener('change', function() {
+    const type = this.value;
+    
+    // Afficher/masquer les champs en fonction du type
+    if (type === 'periodique') {
+        document.getElementById('montantEcheanceGroup').style.display = 'block';
+        document.getElementById('montantMinimumGroup').style.display = 'none';
+        document.getElementById('periodOptions').style.display = 'flex';
+        document.getElementById('frequenceExplication').style.display = 'flex';
+        document.getElementById('periodeSection').classList.remove('souscription-mode');
+    } else {
+        document.getElementById('montantEcheanceGroup').style.display = 'none';
+        document.getElementById('montantMinimumGroup').style.display = 'block';
+        document.getElementById('periodOptions').style.display = 'none';
+        document.getElementById('frequenceExplication').style.display = 'none';
+        document.getElementById('periodeSection').classList.add('souscription-mode');
+    }
+    
+    // Mettre à jour les champs requis
+    toggleRequiredFields();
+});
+
+        // Fonction pour mettre à jour les champs requis
+function toggleRequiredFields() {
+    const type = document.getElementById('typeCotisation').value;
+    
+    if (type === 'periodique') {
+        document.getElementById('montantEcheance').required = true;
+        document.getElementById('montantMinimum').required = false;
+    } else {
+        document.getElementById('montantEcheance').required = false;
+        document.getElementById('montantMinimum').required = true;
+    }
+}
         
-        let selectedMembers = [];
-        
-        // Search functionality
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            
-            memberItems.forEach(item => {
-                const nom = item.dataset.nom.toLowerCase();
-                const prenom = item.dataset.prenom.toLowerCase();
-                const telephone = item.dataset.telephone.toLowerCase();
-                
-                if (nom.includes(searchTerm) || prenom.includes(searchTerm) || telephone.includes(searchTerm)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+        // Gérer la case à cocher "Pas de date de fin"
+        document.getElementById('sansDateFin').addEventListener('change', function() {
+            const dateFin = document.getElementById('dateFin');
+            if (this.checked) {
+                dateFin.disabled = true;
+                dateFin.classList.add('disabled');
+                dateFin.value = '';
+                dateFin.required = false;
+            } else {
+                dateFin.disabled = false;
+                dateFin.classList.remove('disabled');
+                dateFin.required = false;
+                // Réinitialiser à date par défaut (aujourd'hui + 3 mois)
+                const nextMonth = new Date();
+                nextMonth.setMonth(nextMonth.getMonth() + 3);
+                dateFin.value = nextMonth.toISOString().substr(0, 10);
+            }
         });
         
-        // Add member to selected list
-        document.querySelectorAll('.add-member-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const memberItem = this.closest('.member-item');
-                const memberId = memberItem.dataset.id;
-                const memberName = `${memberItem.dataset.prenom} ${memberItem.dataset.nom}`;
-                const memberPhone = memberItem.dataset.telephone;
-                
-                if (!selectedMembers.some(member => member.id === memberId)) {
-                    selectedMembers.push({
-                        id: memberId,
-                        name: memberName,
-                        phone: memberPhone
-                    });
-                    
-                    updateSelectedMembers();
-                    updateMembresInput();
-                    
-                    // Hide from list or disable button
-                    this.disabled = true;
-                    this.textContent = '✓';
-                }
-            });
-        });
-        
-        function updateSelectedMembers() {
-            tagsContainer.innerHTML = '';
+        // Mettre à jour l'explication de fréquence
+        function updateFrequenceExplication() {
+            const periodicite = document.getElementById('periodicite').value;
+            const frequence = document.getElementById('frequence').value;
             
-            selectedMembers.forEach(member => {
-                const tag = document.createElement('div');
-                tag.className = 'tag';
-                tag.innerHTML = `
-                    <span>${member.name} (${member.phone})</span>
-                    <span class="tag-remove" data-id="${member.id}">×</span>
-                `;
-                tagsContainer.appendChild(tag);
-            });
+            let typeText, unitText;
             
-            // Add event listeners to remove buttons
-            document.querySelectorAll('.tag-remove').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const idToRemove = this.getAttribute('data-id');
-                    
-                    // Remove from selected members
-                    selectedMembers = selectedMembers.filter(member => member.id !== idToRemove);
-                    
-                    // Update UI
-                    updateSelectedMembers();
-                    updateMembresInput();
-                    
-                    // Re-enable button in list
-                    const memberBtn = document.querySelector(`.member-item[data-id="${idToRemove}"] .add-member-btn`);
-                    if (memberBtn) {
-                        memberBtn.disabled = false;
-                        memberBtn.textContent = '+';
-                    }
-                });
-            });
+            switch(periodicite) {
+                case 'journalier':
+                    typeText = 'journalière';
+                    unitText = frequence > 1 ? 'jours' : 'jour';
+                    break;
+                case 'hebdomadaire':
+                    typeText = 'hebdomadaire';
+                    unitText = frequence > 1 ? 'semaines' : 'semaine';
+                    break;
+                case 'mensuel':
+                    typeText = 'mensuelle';
+                    unitText = frequence > 1 ? 'mois' : 'mois';
+                    break;
+                default:
+                    typeText = 'personnalisée';
+                    unitText = 'période(s)';
+            }
+            
+            document.querySelector('.frequency-type').textContent = typeText;
+            document.querySelector('.frequency-value').textContent = frequence;
+            document.querySelector('.frequency-unit').textContent = unitText;
         }
         
-        function updateMembresInput() {
-            // Just store member IDs for form submission
-            const memberIds = selectedMembers.map(member => member.id);
-            membresInput.value = JSON.stringify(memberIds);
-        }
+        // Écouter les changements de périodicité et de fréquence
+        document.getElementById('periodicite').addEventListener('change', updateFrequenceExplication);
+        document.getElementById('frequence').addEventListener('change', updateFrequenceExplication);
     </script>
 {% endblock %}
