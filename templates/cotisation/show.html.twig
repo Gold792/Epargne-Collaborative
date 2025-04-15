@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la Cotisation{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Détails de la Cotisation</h1>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">{{ cotisation.titre }}</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <td>{{ cotisation.id }}</td>
+                        </tr>
+                        <tr>
+                            <th>Titre</th>
+                            <td>{{ cotisation.titre }}</td>
+                        </tr>
+                        <tr>
+                            <th>Type de cotisation</th>
+                            <td>
+                                {% if cotisation.typeCotisation == 'periodique' %}
+                                    Cotisation régulière (montant fixe)
+                                {% elseif cotisation.typeCotisation == 'souscription' %}
+                                Contribution libre (montant minimum)
+                                {% else %}
+                                    {{ cotisation.typeCotisation }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td>{{ cotisation.description }}</td>
+                        </tr>
+                        <tr>
+                            <th>Montant objectif</th>
+                            <td>{{ cotisation.montantObjectif|number_format(2, ',', ' ') }} €</td>
+                        </tr>
+                        <tr>
+                            <th>Montant minimum</th>
+                            <td>{{ cotisation.montantMinimum|number_format(2, ',', ' ') }} €</td>
+                        </tr>
+                        {% if cotisation.typeCotisation == 'periodique' %}
+                            <tr>
+                                <th>Montant par échéance</th>
+                                <td>{{ cotisation.montantParEcheance|number_format(2, ',', ' ') }} €</td>
+                            </tr>
+                            <tr>
+                                <th>Périodicité</th>
+                                <td>
+                                    {% if cotisation.periodicite == 'journalier' %}
+                                        Journalier
+                                    {% elseif cotisation.periodicite == 'hebdomadaire' %}
+                                        Hebdomadaire
+                                    {% elseif cotisation.periodicite == 'mensuel' %}
+                                        Mensuel
+                                    {% else %}
+                                        {{ cotisation.periodicite }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Fréquence de période</th>
+                                <td>{{ cotisation.frequencePeriode }}</td>
+                            </tr>
+                        {% endif %}
+                        <tr>
+                            <th>Date de début</th>
+                            <td>{{ cotisation.dateDebut ? cotisation.dateDebut|date('d/m/Y H:i') : '' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date de fin</th>
+                            <td>{{ cotisation.dateFin ? cotisation.dateFin|date('d/m/Y H:i') : 'Indéfinie' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a href="{{ path('app_cotisation_index') }}" class="btn btn-secondary">Retour à la liste</a>
+            <div>
+                <a href="{{ path('app_cotisation_edit', {'id': cotisation.id}) }}" class="btn btn-warning">Modifier</a>
+                
+                <form method="post" action="{{ path('app_cotisation_delete', {'id': cotisation.id}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette cotisation?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cotisation.id) }}">
+                    <button class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

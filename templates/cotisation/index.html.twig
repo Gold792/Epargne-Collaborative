@@ -1,58 +1,134 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des Cotisations{% endblock %}
+{% block title %}Liste des Cotisations - CollabÉpargne{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/listecotisation.css') }}">
+{% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <h1>Liste des Cotisations</h1>
-        
-        {% for message in app.flashes('success') %}
-            <div class="alert alert-success">
-                {{ message }}
+
+        <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">Collab<span>Épargne</span></div>
+            <div class="user-info">
+                <img src="{{ asset('image/profile.png') }}" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <div class="user-name">{{ app.user.nom }} {{ app.user.prenom }}</div>
+                    <div class="user-status">Membre actif</div>
+                </div>
             </div>
-        {% endfor %}
+        </div>
         
-        <div class="d-flex justify-content-between mb-3">
-            <a href="{{ path('app_cotisation_new') }}" class="btn btn-primary">Créer une nouvelle cotisation</a>
-            <a href="{{ path('app_cotisation_add_fixtures') }}" class="btn btn-secondary">Ajouter des cotisations prédéfinies</a>
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">🏠</span>
+                <span><a href="{{ path('app_utilisateur') }}">Tableau de bord</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">➕</span>
+                <span><a href="{{ path('app_cotisation_new') }}">Créer une cotisation</a></span>
+            </li>
+            <li class="sidebar-menu-item active">
+                <span class="menu-icon">👥</span>
+                <span><a href="{{ path('app_cotisation_index') }}">Mes cotisations</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📊</span>
+                <span><a href="#">Historique des contributions</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📅</span>
+                <span><a href="{{ path('app_echeance') }}">Échéances</a></span>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="sidebar-menu-item">
+                <span class="menu-icon">🚪</span>
+                <span><a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+
+        <div class="header">
+            <button class="sidebar-toggle" id="sidebar-toggle">👥</button>
+            <h1 class="page-title">Mes cotisations</h1>
+            <div class="action-buttons">
+                <a href="{{ path('app_utilisateur') }}" class="btn btn-outline">
+                    <span class="btn-icon">↩️</span>
+                    Retour au tableau de bord
+                </a>
+            </div>
+        </div>
+        
+        <!-- Mobile Action Buttons -->
+        <div class="mobile-actions" style="display: none;">
+            <a href="{{ path('app_utilisateur') }}" style="width: 100%; text-decoration: none;">
+                <button class="btn btn-outline" style="width: 100%; margin-bottom: 1rem;">
+                    <span class="btn-icon">↩️</span>
+                    Retour au tableau de bord
+                </button>
+            </a>
         </div>
 
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Titre</th>
-                    <th>Type</th>
-                    <th>Montant objectif</th>
-                    <th>Montant minimum</th>
-                    <th>Date début</th>
-                    <th>Date fin</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for cotisation in cotisations %}
-                <tr>
-                    <td>{{ cotisation.id }}</td>
-                    <td>{{ cotisation.titre }}</td>
-                    <td>{{ cotisation.typeCotisation }}</td>
-                    <td>{{ cotisation.montantObjectif|number_format(2, ',', ' ') }} €</td>
-                    <td>{{ cotisation.montantMinimum|number_format(2, ',', ' ') }} €</td>
-                    <td>{{ cotisation.dateDebut ? cotisation.dateDebut|date('d/m/Y') : '' }}</td>
-                    <td>{{ cotisation.dateFin ? cotisation.dateFin|date('d/m/Y') : 'Indéfinie' }}</td>
-                    <td>
-                        <div class="btn-group" role="group">
-                            <a href="{{ path('app_cotisation_show', {'id': cotisation.id}) }}" class="btn btn-sm btn-info">Voir</a>
-                            <a href="{{ path('app_cotisation_edit', {'id': cotisation.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
-                        </div>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="8">Aucune cotisation trouvée</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        <!-- Form Container avec le formulaire Symfony -->
+        <div class="form-container">
+            <div class="form-section">
+
+                {% for message in app.flashes('success') %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+        
+                <div class="d-flex justify-content-between mb-3">
+                    <a href="#" class="btn btn-primary">Liste des cotisations Créer par moi</a>
+                </div> <br><br>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Titre</th>
+                           <th>Type</th>
+                          <th>Montant_objectif</th>
+                          <th>Montant_minimum</th>
+                          <th>Date_début</th>
+                          <th>Date_fin</th>
+                          <th>Actions</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for cotisation in cotisations %}
+                       <tr>
+                           <td>{{ cotisation.id }}</td>
+                           <td>{{ cotisation.titre }}</td>
+                            <td>{{ cotisation.typeCotisation }}</td>
+                          <td>{{ cotisation.montantObjectif|number_format(2, ',', ' ') }} FCFA</td>
+                         <td>{{ cotisation.montantMinimum|number_format(2, ',', ' ') }} FCFA</td>
+                            <td>{{ cotisation.dateDebut ? cotisation.dateDebut|date('d/m/Y') : '' }}</td>
+                           <td>{{ cotisation.dateFin ? cotisation.dateFin|date('d/m/Y') : 'Indéfinie' }}</td>
+                            <td>
+                             <div class="btn-group" role="group">
+                                   <a href="{{ path('app_cotisation_show', {'id': cotisation.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                             </div>
+                          </td>
+                      </tr>
+                        {% else %}
+                        <tr>
+                         <td colspan="8">Aucune cotisation trouvée</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
     </div>
 {% endblock %}

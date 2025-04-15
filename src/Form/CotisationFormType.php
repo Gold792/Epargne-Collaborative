@@ -28,11 +28,11 @@ class CotisationType extends AbstractType
             ])
             ->add('typeCotisation', ChoiceType::class, [
                 'label' => 'Type de cotisation',
-                'choices' => Cotisation::getTypesCotisation(),
-                'expanded' => true,
-                'multiple' => false,
-                'attr' => ['class' => 'form-check']
+                'choices' => Cotisation::getTypesCotisation(),    
+                'attr' => ['class' => 'form-select']
             ])
+
+
             ->add('description', TextareaType::class, [
                 'label' => 'Description',
                 'required' => false,
@@ -43,15 +43,22 @@ class CotisationType extends AbstractType
                 ]
             ])
             ->add('montantObjectif', MoneyType::class, [
-                'label' => 'Montant objectif (€)',
-                'currency' => 'EUR',
+                'label' => 'Montant objectif (FCFA)',
+                'currency' => '',
+                'attr' => [
+                    'class' => 'form-control'
+                ]
+            ])
+            ->add('montantParEcheance', MoneyType::class, [
+                'label' => 'Montant par échéance (FCFA)',
+                'currency' => '',
                 'attr' => [
                     'class' => 'form-control'
                 ]
             ])
             ->add('montantMinimum', MoneyType::class, [
-                'label' => 'Montant minimum (€)',
-                'currency' => 'EUR',
+                'label' => 'Montant minimum (FCFA)',
+                'currency' => '',
                 'attr' => [
                     'class' => 'form-control'
                 ]
@@ -97,8 +104,8 @@ class CotisationType extends AbstractType
     private function addPeriodicFields($form): void
     {
         $form->add('montantParEcheance', MoneyType::class, [
-            'label' => 'Montant par échéance (€)',
-            'currency' => 'EUR',
+            'label' => 'Montant par échéance (FCFA)',
+            'currency' => '',
             'attr' => [
                 'class' => 'form-control'
             ]

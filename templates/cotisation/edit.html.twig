@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la Cotisation{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Modifier la Cotisation</h1>
+
+        {{ form_start(form) }}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Informations générales</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        {{ form_label(form.titre) }}
+                        {{ form_widget(form.titre) }}
+                        {{ form_errors(form.titre) }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.typeCotisation) }}
+                        {{ form_widget(form.typeCotisation) }}
+                        {{ form_errors(form.typeCotisation) }}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_label(form.description) }}
+                        {{ form_widget(form.description) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Montants</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(form.montantObjectif) }}
+                                {{ form_widget(form.montantObjectif) }}
+                                {{ form_errors(form.montantObjectif) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(form.montantMinimum) }}
+                                {{ form_widget(form.montantMinimum) }}
+                                {{ form_errors(form.montantMinimum) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if form.montantParEcheance is defined %}
+                        <div class="mb-3">
+                            {{ form_label(form.montantParEcheance) }}
+                            {{ form_widget(form.montantParEcheance) }}
+                            {{ form_errors(form.montantParEcheance) }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Période</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(form.dateDebut) }}
+                                {{ form_widget(form.dateDebut) }}
+                                {{ form_errors(form.dateDebut) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form_label(form.dateFin) }}
+                                {{ form_widget(form.dateFin) }}
+                                {{ form_errors(form.dateFin) }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if form.periodicite is defined %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form_label(form.periodicite) }}
+                                    {{ form_widget(form.periodicite) }}
+                                    {{ form_errors(form.periodicite) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    {{ form_label(form.frequencePeriode) }}
+                                    {{ form_widget(form.frequencePeriode) }}
+                                    {{ form_errors(form.frequencePeriode) }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a href="{{ path('app_cotisation_index') }}" class="btn btn-secondary">Retour à la liste</a>
+                <button type="submit" class="btn btn-success">Enregistrer les modifications</button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Récupérer les éléments radio de type de cotisation
+        const typeCotisationRadios = document.querySelectorAll('input[name="cotisation_type[typeCotisation]"]');
+        
+        // Fonction pour montrer/cacher les champs de périodicité
+        function togglePeriodicFields() {
+            const periodicContainer = document.getElementById('periodic-fields-container');
+            const isPeriodic = Array.from(typeCotisationRadios).find(radio => radio.checked)?.value === 'periodique';
+            
+            if (periodicContainer) {
+                periodicContainer.style.display = isPeriodic ? 'block' : 'none';
+            }
+        }
+        
+        // Ajouter des écouteurs d'événements aux radios
+        typeCotisationRadios.forEach(radio => {
+            radio.addEventListener('change', togglePeriodicFields);
+        });
+        
+        // Appeler la fonction une fois au chargement de la page
+        togglePeriodicFields();
+    });
+</script>
+{% endblock %}
