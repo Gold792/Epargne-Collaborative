@@ -997,4 +997,32 @@
         });
     });
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion de la navigation par onglets
+        const tabItems = document.querySelectorAll('.tab-item');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+
+                // Désactiver tous les onglets et contenus
+                tabItems.forEach(tab => tab.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Activer l'onglet et le contenu sélectionnés
+                this.classList.add('active');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // Initialisation : afficher le premier onglet par défaut
+        const defaultTab = document.querySelector('.tab-item.active');
+        if (defaultTab) {
+            const defaultTabId = defaultTab.getAttribute('data-tab');
+            document.getElementById(`${defaultTabId}-tab`).classList.add('active');
+        }
+    });
+</script>
 {% endblock %}
