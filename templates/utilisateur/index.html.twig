@@ -87,7 +87,7 @@
             <div class="card summary-card">
                 <div class="card-header">
                     <div>
-                        <div class="card-title">Mes cotisations</div>
+                        <div class="card-title">Nombres de groupe de cotisation</div>
                     </div>
                     <div class="card-icon primary">👥</div>
                 </div>
@@ -175,39 +175,6 @@
                     <div class="card-subtitle">Aucun versement prévu</div>
                     <div class="card-footer">
                         <span>Vous n'avez pas d'échéance programmée</span>
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="card summary-card">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">Objectif principal</div>
-                    </div>
-                    <div class="card-icon danger">🎯</div>
-                </div>
-                {% if objectif_principal is defined and objectif_principal %}
-                    <div class="card-value">{{ objectif_principal.progression }}%</div>
-                    <div class="card-subtitle">{{ objectif_principal.nom }}</div>
-                    <div class="progress-container">
-                        <div class="progress-bar primary" style="width: {{ objectif_principal.progression }}%"></div>
-                    </div>
-                    <div class="card-details">
-                        {{ objectif_principal.montant_actuel|number_format(0, ',', ' ') }} FCFA / {{ objectif_principal.montant_objectif|number_format(0, ',', ' ') }} FCFA
-                    </div>
-                    <div class="card-footer">
-                        {% if objectif_principal.evolution > 0 %}
-                            <span class="trend-up">↑ {{ objectif_principal.evolution }}% </span>
-                            <span>ce mois-ci</span>
-                        {% else %}
-                            <span>Stable ce mois-ci</span>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <div class="card-value">0%</div>
-                    <div class="card-subtitle">Aucun objectif défini</div>
-                    <div class="card-footer">
-                        <span>Créez une cotisation pour définir un objectif</span>
                     </div>
                 {% endif %}
             </div>
