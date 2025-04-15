@@ -8,8 +8,7 @@
 {% endblock %}
 
 {% block body %}
-
-        <!-- Sidebar -->
+    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">Collab<span>Épargne</span></div>
@@ -54,7 +53,6 @@
     </div>
 
     <div class="main-content">
-
         <div class="header">
             <button class="sidebar-toggle" id="sidebar-toggle">👥</button>
             <h1 class="page-title">Mes cotisations</h1>
@@ -76,21 +74,26 @@
             </a>
         </div>
 
-        <!-- Form Container avec le formulaire Symfony -->
-        <div class="form-container">
-            <div class="form-section">
+        <!-- Conteneur principal avec les deux onglets -->
+        <div class="tabs-container">
+           
+            
+            <!-- Premier onglet: Cotisations créées par moi -->
+            <div class="tab-content active" id="tab-created">
+                <div class="form-container">
+                    <div class="form-section">
+                        {% for message in app.flashes('success') %}
+                            <div class="alert alert-success">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                
+                        <div class="section-header">
+                            <h2>Cotisations que j'ai créées</h2>
+                            <div class="action-badge">{{ cotisations|length }} cotisation(s)</div>
+                        </div>
 
-                {% for message in app.flashes('success') %}
-                    <div class="alert alert-success">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-        
-                <div class="d-flex justify-content-between mb-3">
-                    <a href="#" class="btn btn-primary">Liste des cotisations Créer par moi</a>
-                </div> <br><br>
-
-                <table class="table table-striped" border="1">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                           <th>ID</th>
@@ -98,7 +101,6 @@
                            <th>Type</th>
                           <th>Montant_objectif</th>
                           <th>Montant_minimum</th>
-                          <th>Montant_par_echance</th>
                           <th>Date_début</th>
                           <th>Date_fin</th>
                           <th>Actions</th>
@@ -111,9 +113,8 @@
                            <td>{{ cotisation.id }}</td>
                            <td>{{ cotisation.titre }}</td>
                             <td>{{ cotisation.typeCotisation }}</td>
-                          <td>{{ cotisation.montantObjectif|number_format(0, ',', ' ') }} FCFA</td>
-                         <td>{{ cotisation.montantMinimum|number_format(0, ',', ' ') }} FCFA</td>
-                         <td>{{ cotisation.montantParEcheance|number_format(0, ',', ' ') }} FCFA</td>
+                          <td>{{ cotisation.montantObjectif|number_format(2, ',', ' ') }} FCFA</td>
+                         <td>{{ cotisation.montantMinimum|number_format(2, ',', ' ') }} FCFA</td>
                             <td>{{ cotisation.dateDebut ? cotisation.dateDebut|date('d/m/Y') : '' }}</td>
                            <td>{{ cotisation.dateFin ? cotisation.dateFin|date('d/m/Y') : 'Indéfinie' }}</td>
                             <td>
@@ -133,4 +134,53 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Script pour gérer les onglets
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Désactiver tous les onglets
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Activer l'onglet cliqué
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Gestion du sidebar pour mobile
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
+            
+            // Afficher/masquer le bouton mobile selon la taille d'écran
+            function checkScreenSize() {
+                const mobileActions = document.querySelector('.mobile-actions');
+                const actionButtons = document.querySelector('.action-buttons');
+                
+                if (window.innerWidth <= 768) {
+                    mobileActions.style.display = 'block';
+                    actionButtons.style.display = 'none';
+                } else {
+                    mobileActions.style.display = 'none';
+                    actionButtons.style.display = 'flex';
+                }
+            }
+            
+            // Exécuter au chargement et lors du redimensionnement
+            checkScreenSize();
+            window.addEventListener('resize', checkScreenSize);
+        });
+    </script>
 {% endblock %}
