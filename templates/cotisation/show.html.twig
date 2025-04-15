@@ -472,7 +472,7 @@
                             {% endfor %}
                         {% else %}
                             <div class="empty-state">
-                                <p>Aucun membre n'a encore rejoint cette cotisation.</p>
+                                {# <p>Aucun membre n'a encore rejoint cette cotisation.</p> #}
                                     <button id="emptyAddMemberBtn" class="btn btn-primary">
                                         <span class="btn-icon">➕</span>
                                         Ajouter un membre
@@ -483,19 +483,19 @@
                         
                         <!-- Exemple de membres en attente (pour démo) -->
                         <div class="member-card">
-                            <div class="member-avatar">MP</div>
+                            <div class="member-avatar">LP</div>
                             <div class="member-info">
-                                <div class="member-name">Marie Paule</div>
-                                <div class="member-phone">+221 77 123 45 67</div>
+                                <div class="member-name">LANMAI Prince</div>
+                                <div class="member-phone">+229 01 xx xxx xx</div>
                             </div>
                             <div class="member-status">Actif</div>
                         </div>
                         
                         <div class="member-card">
-                            <div class="member-avatar">AS</div>
+                            <div class="member-avatar">OM</div>
                             <div class="member-info">
-                                <div class="member-name">Amadou Sow</div>
-                                <div class="member-phone">+221 70 987 65 43</div>
+                                <div class="member-name">OLOUKOSSI Manzidath</div>
+                                <div class="member-phone">+229 01 99 xxx xx</div>
                             </div>
                             <div class="member-status pending">En attente</div>
                         </div>
@@ -527,7 +527,7 @@
                             </div>
                             <div class="payment-member">
                                 <div style="width: 35px; height: 35px; background-color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-right: 10px;">MP</div>
-                                <div>Marie Paule</div>
+                                <div>LANMAI Prince</div>
                                 <div class="payment-status">Payé</div>
                             </div>
                         </div>
@@ -539,7 +539,7 @@
                             </div>
                             <div class="payment-member">
                                 <div style="width: 35px; height: 35px; background-color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-right: 10px;">FD</div>
-                                <div>Fatou Diop</div>
+                                <div>OLOUKOSSI Manzidath</div>
                                 <div class="payment-status">Payé</div>
                             </div>
                         </div>
@@ -559,7 +559,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="memberPhone">Numéro de téléphone</label>
-                    <input type="text" id="memberPhone" class="form-control" placeholder="+229 XX XXX XX XX">
+                    <input type="number" id="memberPhone" class="form-control" placeholder="+229 XX XXX XX XX">
                     <small class="form-helper">Saisissez le numéro de téléphone du membre à ajouter</small>
                 </div>
                 
@@ -709,9 +709,10 @@
             // Rechercher un membre
             searchMember.addEventListener('click', function() {
                 const phoneNumber = memberPhone.value.trim();
-                
-                if (!phoneNumber) {
-                    alert('Veuillez saisir un numéro de téléphone.');
+
+                // Vérifier que le numéro contient au moins 10 chiffres
+                if (phoneNumber.length < 10) {
+                    alert('Veuillez saisir un numéro de téléphone valide (au moins 10 chiffres).');
                     return;
                 }
                 
@@ -719,17 +720,26 @@
                 setTimeout(() => {
                     memberSearchResult.style.display = 'block';
                     
-                    // Simuler un résultat trouvé ou non (à des fins de démonstration)
-                    if (phoneNumber.includes('77')) {
+                    // Simuler un résultat trouvé ou non
+                    if (phoneNumber === '0151436520') {
                         // Membre trouvé
                         foundMember.style.display = 'flex';
                         notFoundMessage.style.display = 'none';
                         confirmAddMember.style.display = 'block';
-                        searchMember.style.display = 'none';
                         
                         // Afficher les informations du membre
-                        document.getElementById('memberInitials').textContent = 'MP';
-                        document.getElementById('memberName').textContent = 'Marie Paule';
+                        document.getElementById('memberInitials').textContent = 'LP';
+                        document.getElementById('memberName').textContent = 'LANMAI Prince';
+                        document.getElementById('memberPhoneDisplay').textContent = phoneNumber;
+                    } else if (phoneNumber === '0153999658') {
+                        // Membre trouvé : OLOUKOSSI Manzidath
+                        foundMember.style.display = 'flex';
+                        notFoundMessage.style.display = 'none';
+                        confirmAddMember.style.display = 'block';
+
+                        // Afficher les informations du membre
+                        document.getElementById('memberInitials').textContent = 'OM';
+                        document.getElementById('memberName').textContent = 'OLOUKOSSI Manzidath';
                         document.getElementById('memberPhoneDisplay').textContent = phoneNumber;
                     } else {
                         // Membre non trouvé
@@ -1023,6 +1033,61 @@
             const defaultTabId = defaultTab.getAttribute('data-tab');
             document.getElementById(`${defaultTabId}-tab`).classList.add('active');
         }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion du modal d'ajout de membre
+        const searchMember = document.getElementById('searchMember');
+        const memberSearchResult = document.getElementById('memberSearchResult');
+        const foundMember = document.getElementById('foundMember');
+        const notFoundMessage = document.getElementById('notFoundMessage');
+        const memberPhone = document.getElementById('memberPhone');
+        const confirmAddMember = document.getElementById('confirmAddMember');
+
+        // Rechercher un membre
+        searchMember.addEventListener('click', function() {
+            const phoneNumber = memberPhone.value.trim();
+
+            // Vérifier que le numéro contient au moins 10 chiffres
+            if (phoneNumber.length < 10) {
+                alert('Veuillez saisir un numéro de téléphone valide (au moins 10 chiffres).');
+                return;
+            }
+
+            // Simulation de recherche (à remplacer par une véritable requête AJAX)
+            setTimeout(() => {
+                memberSearchResult.style.display = 'block';
+
+                // Simuler un résultat trouvé ou non
+                if (phoneNumber === '0151436520') {
+                    // Membre trouvé
+                    foundMember.style.display = 'flex';
+                    notFoundMessage.style.display = 'none';
+                    confirmAddMember.style.display = 'block';
+
+                    // Afficher les informations du membre
+                    document.getElementById('memberInitials').textContent = 'LP';
+                    document.getElementById('memberName').textContent = 'LANMAI Prince';
+                    document.getElementById('memberPhoneDisplay').textContent = phoneNumber;
+                } else if (phoneNumber === '0153999658') {
+                    // Membre trouvé : OLOUKOSSI Manzidath
+                    foundMember.style.display = 'flex';
+                    notFoundMessage.style.display = 'none';
+                    confirmAddMember.style.display = 'block';
+
+                    // Afficher les informations du membre
+                    document.getElementById('memberInitials').textContent = 'OM';
+                    document.getElementById('memberName').textContent = 'OLOUKOSSI Manzidath';
+                    document.getElementById('memberPhoneDisplay').textContent = phoneNumber;
+                } else {
+                    // Membre non trouvé
+                    foundMember.style.display = 'none';
+                    notFoundMessage.style.display = 'block';
+                    confirmAddMember.style.display = 'none';
+                }
+            }, 500);
+        });
     });
 </script>
 {% endblock %}
