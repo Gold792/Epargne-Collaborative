@@ -738,3 +738,346 @@ textarea {
     transition: all 0.3s;
     background-color: #fff;
 }
+/* Styles des onglets */
+.tabs-container {
+    margin-bottom: 2rem;
+}
+
+.tabs-header {
+    display: flex;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--form-border);
+    gap: 0.25rem;
+}
+
+.tab-button {
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-weight: 600;
+    color: var(--dark-color);
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    position: relative;
+    opacity: 0.7;
+}
+
+.tab-button:hover {
+    background-color: var(--hover-bg);
+    opacity: 0.9;
+}
+
+.tab-button.active {
+    border-bottom: 3px solid var(--accent-color);
+    opacity: 1;
+    background-color: rgba(243, 156, 18, 0.08);
+}
+
+.tab-icon {
+    font-size: 1.1rem;
+}
+
+.tab-badge {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50px;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease forwards;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Section headers */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.action-badge {
+    background-color: var(--light-color);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dark-color);
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* Style des tableaux */
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--form-border);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.data-table thead {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.data-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    position: relative;
+}
+
+.data-table th:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 25%;
+    height: 50%;
+    width: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.data-table th:last-child:after {
+    display: none;
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--form-border);
+    color: var(--text-color);
+    vertical-align: middle;
+    transition: all 0.2s;
+}
+
+.data-table tbody tr {
+    transition: all 0.2s;
+}
+
+.data-table tbody tr:hover {
+    background-color: rgba(245, 247, 250, 0.8);
+}
+
+.data-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Cellules spécifiques */
+.title-cell {
+    font-weight: 600;
+    color: var(--primary-color);
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.amount-cell {
+    font-weight: 600;
+    color: var(--dark-color);
+    text-align: right;
+}
+
+.actions-cell {
+    text-align: center;
+}
+
+.actions-group {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+/* Badges */
+.badge {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.badge-success {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: #27ae60;
+}
+
+.badge-warning {
+    background-color: rgba(243, 156, 18, 0.15);
+    color: #d35400;
+}
+
+.badge-info {
+    background-color: rgba(52, 152, 219, 0.15);
+    color: #2980b9;
+}
+
+.badge-secondary {
+    background-color: rgba(127, 140, 141, 0.15);
+    color: #7f8c8d;
+}
+
+.badge-type {
+    background-color: rgba(26, 82, 118, 0.1);
+    color: var(--primary-color);
+}
+
+/* Barres de progression */
+.progress-container {
+    height: 12px;
+    background-color: #f5f7fa;
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    min-width: 150px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--dark-color);
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.7);
+}
+
+/* Styles pour tableau vide */
+.empty-table td {
+    padding: 3rem 1rem;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--disabled-text);
+}
+
+.empty-text {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: var(--disabled-text);
+}
+
+.empty-action {
+    margin-top: 1rem;
+}
+
+/* Boutons d'actions dans les tableaux */
+.btn-icon-sm {
+    margin-right: 0.3rem;
+    font-size: 0.9rem;
+}
+
+/* Alerte de succès */
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #27ae60;
+    border-left-color: #27ae60;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .data-table {
+        min-width: 1000px;
+    }
+}
+
+@media (max-width: 992px) {
+    .tabs-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        border-bottom: none;
+    }
+
+    .tab-button {
+        width: 100%;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--form-border);
+        padding: 0.8rem 1rem;
+    }
+
+    .tab-button.active {
+        background-color: rgba(243, 156, 18, 0.12);
+        border-left: 3px solid var(--accent-color);
+        border-bottom: 1px solid var(--form-border);
+    }
+}
+
+@media (max-width: 768px) {
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+
+    .actions-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .actions-group .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Animation pour le chargement de l'onglet */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -237,6 +237,25 @@
                 nextMonth.setMonth(nextMonth.getMonth() + 3);
                 dateFinInput.value = nextMonth.toISOString().substr(0, 10);
             }
+
+            // Handle "Pas de date de fin" checkbox
+            const sansDateFinCheckbox = document.getElementById('sansDateFin');
+            sansDateFinCheckbox.addEventListener('change', function() {
+                if (sansDateFinCheckbox.checked) {
+                    dateFinInput.disabled = true;
+                    dateFinInput.value = '';
+                } else {
+                    dateFinInput.disabled = false;
+                    const nextMonth = new Date();
+                    nextMonth.setMonth(nextMonth.getMonth() + 3);
+                    dateFinInput.value = nextMonth.toISOString().substr(0, 10);
+                }
+            });
+
+            // Initialize "Pas de date de fin" checkbox state
+            if (sansDateFinCheckbox.checked) {
+                dateFinInput.disabled = true;
+            }
         });
 
         // Fonction pour afficher/masquer les sections en fonction du type de cotisation

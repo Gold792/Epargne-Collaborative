@@ -137,4 +137,25 @@ class CreationCotisationController extends AbstractController
         
         $entityManager->flush();
     }
+
+    #[Route('/cotisation/modifier/{id}', name: 'modifier_cotisation', methods: ['POST'])]
+    public function modifierCotisation(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $titre = $request->request->get('titre');
+
+        // Récupérer la cotisation depuis la base de données
+        $cotisation = $entityManager->getRepository(Cotisation::class)->find($id);
+
+        if (!$cotisation) {
+            throw $this->createNotFoundException('Cotisation non trouvée.');
+        }
+
+        // Mettre à jour le titre
+        $cotisation->setTitre($titre);
+        $entityManager->flush();
+
+        // Rediriger vers la page de la cotisation
+        return $this->redirectToRoute('app_cotisation_show', ['id' => $id]);
+    }
 }
+    

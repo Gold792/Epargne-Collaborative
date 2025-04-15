@@ -4,7 +4,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/listecotisation.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/listecotisatio.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -74,63 +74,188 @@
             </a>
         </div>
 
+        <!-- Messages flash -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
         <!-- Conteneur principal avec les deux onglets -->
         <div class="tabs-container">
-           
+            <!-- Sélecteur d'onglets -->
+            <div class="tabs-header">
+                <button class="tab-button active" data-tab="tab-created">
+                    <span class="tab-icon">🎯</span>
+                    <span class="tab-text">Cotisations créées par moi</span>
+                    <span class="tab-badge">{{ cotisations|length }}</span>
+                </button>
+                <button class="tab-button" data-tab="tab-joined">
+                    <span class="tab-icon">👥</span>
+                    <span class="tab-text">Cotisations dont je suis membre</span>
+                    <span class="tab-badge">{{ participations is defined ? participations|length : 0 }}</span>
+                </button>
+            </div>
             
             <!-- Premier onglet: Cotisations créées par moi -->
             <div class="tab-content active" id="tab-created">
                 <div class="form-container">
                     <div class="form-section">
-                        {% for message in app.flashes('success') %}
-                            <div class="alert alert-success">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                
                         <div class="section-header">
                             <h2>Cotisations que j'ai créées</h2>
                             <div class="action-badge">{{ cotisations|length }} cotisation(s)</div>
                         </div>
 
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Titre</th>
-                           <th>Type</th>
-                          <th>Montant_objectif</th>
-                          <th>Montant_minimum</th>
-                          <th>Date_début</th>
-                          <th>Date_fin</th>
-                          <th>Actions</th>
-                      </tr>
-                    </thead>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Titre</th>
+                                        <th>Type</th>
+                                        <th>Montant objectif</th>
+                                        <th>Date début</th>
+                                        <th>Date fin</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for cotisation in cotisations %}
+                                    <tr>
+                                        <td>{{ cotisation.id }}</td>
+                                        <td class="title-cell">{{ cotisation.titre }}</td>
+                                        <td>
+                                            <span class="badge badge-type">{{ cotisation.typeCotisation }}</span>
+                                        </td>
+                                        <td class="amount-cell">{{ cotisation.montantObjectif|number_format(2, ',', ' ') }} FCFA</td>
+                                        <td>{{ cotisation.dateDebut ? cotisation.dateDebut|date('d/m/Y') : '' }}</td>
+                                        <td>{{ cotisation.dateFin ? cotisation.dateFin|date('d/m/Y') : 'Indéfinie' }}</td>
+                                        <td class="actions-cell">
+                                            <div class="actions-group">
+                                                <a href="{{ path('app_cotisation_show', {'id': cotisation.id}) }}" class="btn btn-sm btn-info">
+                                                    <span class="btn-icon-sm">👁️</span> Voir
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr class="empty-table">
+                                        <td colspan="8">
+                                            <div class="empty-state">
+                                                <div class="empty-icon">📝</div>
+                                                <div class="empty-text">Aucune cotisation trouvée</div>
+                                                <div class="empty-action">
+                                                    <a href="{{ path('app_cotisation_new') }}" class="btn btn-primary">
+                                                        <span class="btn-icon">➕</span> Créer une cotisation
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                    <tbody>
-                        {% for cotisation in cotisations %}
-                       <tr>
-                           <td>{{ cotisation.id }}</td>
-                           <td>{{ cotisation.titre }}</td>
-                            <td>{{ cotisation.typeCotisation }}</td>
-                          <td>{{ cotisation.montantObjectif|number_format(2, ',', ' ') }} FCFA</td>
-                         <td>{{ cotisation.montantMinimum|number_format(2, ',', ' ') }} FCFA</td>
-                            <td>{{ cotisation.dateDebut ? cotisation.dateDebut|date('d/m/Y') : '' }}</td>
-                           <td>{{ cotisation.dateFin ? cotisation.dateFin|date('d/m/Y') : 'Indéfinie' }}</td>
-                            <td>
-                             <div class="btn-group" role="group">
-                                   <a href="{{ path('app_cotisation_show', {'id': cotisation.id}) }}" class="btn btn-sm btn-info">Voir</a>
-                             </div>
-                          </td>
-                      </tr>
-                        {% else %}
-                        <tr>
-                         <td colspan="8">Aucune cotisation trouvée</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <!-- Deuxième onglet: Cotisations dont je suis membre -->
+            <div class="tab-content" id="tab-joined">
+                <div class="form-container">
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h2>Cotisations auxquelles je participe</h2>
+                            <div class="action-badge">{{ participations is defined ? participations|length : 0 }} participation(s)</div>
+                        </div>
 
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Titre</th>
+                                        <th>Créateur</th>
+                                        <th>Type</th>
+                                        <th>Montant objectif</th>
+                                        <th>Ma contribution</th>
+                                        <th>Statut</th>
+                                        <th>Progression</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if participations is defined %}
+                                        {% for participation in participations %}
+                                            <tr>
+                                                <td class="title-cell">{{ participation.cotisation.titre }}</td>
+                                                <td>{{ participation.cotisation.createur.nom }} {{ participation.cotisation.createur.prenom }}</td>
+                                                <td>
+                                                    <span class="badge badge-type">{{ participation.cotisation.typeCotisation }}</span>
+                                                </td>
+                                                <td class="amount-cell">{{ participation.cotisation.montantObjectif|number_format(2, ',', ' ') }} FCFA</td>
+                                                <td class="amount-cell">{{ participation.montantContribue|number_format(2, ',', ' ') }} FCFA</td>
+                                                <td>
+                                                    {% if participation.statut == 'active' %}
+                                                        <span class="badge badge-success">Active</span>
+                                                    {% elseif participation.statut == 'pending' %}
+                                                        <span class="badge badge-warning">En attente</span>
+                                                    {% elseif participation.statut == 'completed' %}
+                                                        <span class="badge badge-info">Terminée</span>
+                                                    {% else %}
+                                                        <span class="badge badge-secondary">{{ participation.statut }}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <div class="progress-container">
+                                                        {% set percentage = (participation.montantContribue / participation.cotisation.montantMinimum) * 100 %}
+                                                        {% if percentage > 100 %}
+                                                            {% set percentage = 100 %}
+                                                        {% endif %}
+                                                        <div class="progress-bar" style="width: {{ percentage }}%"></div>
+                                                        <span class="progress-text">{{ percentage|round }}%</span>
+                                                    </div>
+                                                </td>
+                                                <td class="actions-cell">
+                                                    <div class="actions-group">
+                                                        <a href="{{ path('app_cotisation_show', {'id': participation.cotisation.id}) }}" class="btn btn-sm btn-info">
+                                                            <span class="btn-icon-sm">👁️</span> Voir
+                                                        </a>
+                                                        <a href="{{ path('app_contribution_new', {'id': participation.cotisation.id}) }}" class="btn btn-sm btn-success">
+                                                            <span class="btn-icon-sm">💰</span> Contribuer
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% else %}
+                                            <tr class="empty-table">
+                                                <td colspan="8">
+                                                    <div class="empty-state">
+                                                        <div class="empty-icon">🔍</div>
+                                                        <div class="empty-text">Vous ne participez à aucune cotisation</div>
+                                                        <div class="empty-action">
+                                                            <a href="{{ path('app_cotisation_browse') }}" class="btn btn-primary">
+                                                                <span class="btn-icon">🔎</span> Explorer les cotisations
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr class="empty-table">
+                                            <td colspan="8">
+                                                <div class="empty-state">
+                                                    <div class="empty-icon">🔍</div>
+                                                    <div class="empty-text">Aucune donnée disponible</div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

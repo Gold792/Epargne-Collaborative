@@ -372,7 +372,6 @@
             <div class="form-section">
                 <div class="editable-title">
                     <h2>{{ cotisation.titre }}</h2>
-
                     <button class="btn btn-sm btn-outline edit-title-btn" id="editTitleBtn">
                         <span class="btn-icon">✏️</span>
                         Modifier
@@ -593,6 +592,7 @@
     
     <!-- Modal pour modifier le titre -->
     <div class="modal-overlay" id="editTitleModal">
+        <form method="post" action="{{ path('modifier_cotisation', { id: cotisation.id }) }}">
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title">Modifier le titre</h3>
@@ -601,15 +601,16 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="cotisationTitle">Titre de la cotisation</label>
-                    <input type="text" id="cotisationTitle" class="form-control" value="{{ cotisation.titre }}">
+                    <input type="text" name="titre" id="cotisationTitle" class="form-control" value="{{ cotisation.titre }}" required>
                 </div>
             </div>
             <div class="modal-footer">
                 <button id="cancelEditTitle" class="btn btn-outline">Annuler</button>
-                <button id="saveTitleBtn" class="btn btn-success">Enregistrer</button>
+                <button type="submit" id="saveTitleBtn" class="btn btn-success">Enregistrer</button>
             </div>
         </div>
-        
+        </form>
+
     </div>
 
 {% endblock %}
