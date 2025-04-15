@@ -146,7 +146,13 @@
                     <div class="form-row date-row">
                         <div class="form-group">
                             {{ form_label(form.dateDebut, 'Date de début', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(form.dateDebut) }}
+                            {{ form_widget(form.dateDebut, {'attr': {'style': 'width: 100%;
+                                        padding: 1rem;
+                                        border-radius: 8px;
+                                        border: 1px solid #ddd;
+                                        font-size: 1rem;
+                                        transition: all 0.3s;
+                                        background-color: #fff;'}}) }}
                             <small class="form-helper">Date à laquelle la cotisation commence</small>
                             {{ form_errors(form.dateDebut) }}
                         </div>
@@ -154,7 +160,14 @@
                         <div class="form-group date-fin-group">
                             {{ form_label(form.dateFin, 'Date de fin', {'label_attr': {'class': 'form-label'}}) }}
                             <div class="date-fin-container">
-                                {{ form_widget(form.dateFin) }}
+                                    {{ form_widget(form.dateFin, {'attr': {'style': 'width: 100%;
+                                        padding: 1rem;
+                                        border-radius: 8px;
+                                        border: 1px solid #ddd;
+                                        font-size: 1rem;
+                                        transition: all 0.3s;
+                                        background-color: #fff;'}}) }}
+                                    
                                 <div class="checkbox-container">
                                     <input type="checkbox" id="sansDateFin" name="sansDateFin">
                                     <label for="sansDateFin">Pas de date de fin</label>
@@ -203,81 +216,65 @@
     </div>
     
     <script>
-        // Initialiser la date du jour
+
         document.addEventListener('DOMContentLoaded', function() {
-            // S'il n'y a pas déjà une date définie
+            // Initialiser les sections en fonction du type de cotisation
+            toggleTypeCotisationSections();
+
+            // Initialiser l'explication de fréquence
+            updateFrequenceExplication();
+
+            // Initialiser les champs de date
             const dateDebutInput = document.getElementById('{{ form.dateDebut.vars.id }}');
             if (!dateDebutInput.value) {
                 const today = new Date();
-                const formattedDate = today.toISOString().substr(0, 10);
-                dateDebutInput.value = formattedDate;
+                dateDebutInput.value = today.toISOString().substr(0, 10);
             }
-            
-            // Initialiser date de fin par défaut si vide
+
             const dateFinInput = document.getElementById('{{ form.dateFin.vars.id }}');
             if (!dateFinInput.value) {
                 const nextMonth = new Date();
                 nextMonth.setMonth(nextMonth.getMonth() + 3);
-                const formattedNextMonth = nextMonth.toISOString().substr(0, 10);
-                dateFinInput.value = formattedNextMonth;
+                dateFinInput.value = nextMonth.toISOString().substr(0, 10);
             }
-            
-            // Initialiser l'explication de fréquence
-            updateFrequenceExplication();
         });
-        
-        // Toggle sidebar on mobile
-        document.getElementById('sidebar-toggle').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('active');
-        });
-        
-        // Mobile detection for responsive UI
-        function checkMobile() {
-            if (window.innerWidth <= 768) {
-                document.querySelector('.mobile-actions').style.display = 'block';
-                document.querySelector('.action-buttons').style.display = 'none';
-            } else {
-                document.querySelector('.mobile-actions').style.display = 'none';
-                document.querySelector('.action-buttons').style.display = 'flex';
-            }
-        }
-        
-        // Check on load and resize
-        window.addEventListener('load', checkMobile);
-        window.addEventListener('resize', checkMobile);
-        
-        // Toggle type de cotisation
-        document.getElementById('{{ form.typeCotisation.vars.id }}').addEventListener('change', function() {
-            const type = this.value;
-            
-            // Afficher/masquer les champs en fonction du type
+
+        // Fonction pour afficher/masquer les sections en fonction du type de cotisation
+        function toggleTypeCotisationSections() {
+            const type = document.getElementById('{{ form.typeCotisation.vars.id }}').value;
+
+            const montantEcheanceGroup = document.getElementById('montantEcheanceGroup');
+            const montantMinimumGroup = document.getElementById('montantMinimumGroup');
+            const periodOptions = document.getElementById('periodOptions');
+            const frequenceExplication = document.getElementById('frequenceExplication');
+            const periodeSection = document.getElementById('periodeSection');
+
             if (type === 'periodique') {
-                document.getElementById('montantEcheanceGroup').style.display = 'block';
-                document.getElementById('montantMinimumGroup').style.display = 'none';
-                document.getElementById('periodOptions').style.display = 'flex';
-                document.getElementById('frequenceExplication').style.display = 'flex';
-                document.getElementById('periodeSection').classList.remove('souscription-mode');
+                montantEcheanceGroup.style.display = 'block';
+                montantMinimumGroup.style.display = 'none';
+                periodOptions.style.display = 'flex';
+                frequenceExplication.style.display = 'flex';
+                periodeSection.classList.remove('souscription-mode');
             } else {
-                document.getElementById('montantEcheanceGroup').style.display = 'none';
-                document.getElementById('montantMinimumGroup').style.display = 'block';
-                document.getElementById('periodOptions').style.display = 'none';
-                document.getElementById('frequenceExplication').style.display = 'none';
-                document.getElementById('periodeSection').classList.add('souscription-mode');
+                montantEcheanceGroup.style.display = 'none';
+                montantMinimumGroup.style.display = 'block';
+                periodOptions.style.display = 'none';
+                frequenceExplication.style.display = 'none';
+                periodeSection.classList.add('souscription-mode');
             }
-            
-            // Mettre à jour les champs requis
+
             toggleRequiredFields();
-        });
+        }
 
         // Fonction pour mettre à jour les champs requis
         function toggleRequiredFields() {
             const type = document.getElementById('{{ form.typeCotisation.vars.id }}').value;
-            
+
             {% if form.montantParEcheance is defined %}
             const montantEcheanceInput = document.getElementById('{{ form.montantParEcheance.vars.id }}');
             {% endif %}
             const montantMinimumInput = document.getElementById('{{ form.montantMinimum.vars.id }}');
-            
+
             if (type === 'periodique') {
                 {% if form.montantParEcheance is defined %}
                 montantEcheanceInput.required = true;
@@ -290,60 +287,53 @@
                 montantMinimumInput.required = true;
             }
         }
-        
-        // Gérer la case à cocher "Pas de date de fin"
-        document.getElementById('sansDateFin').addEventListener('change', function() {
-            const dateFin = document.getElementById('{{ form.dateFin.vars.id }}');
-            if (this.checked) {
-                dateFin.disabled = true;
-                dateFin.classList.add('disabled');
-                dateFin.value = '';
-                dateFin.required = false;
-            } else {
-                dateFin.disabled = false;
-                dateFin.classList.remove('disabled');
-                dateFin.required = false;
-                // Réinitialiser à date par défaut (aujourd'hui + 3 mois)
-                const nextMonth = new Date();
-                nextMonth.setMonth(nextMonth.getMonth() + 3);
-                dateFin.value = nextMonth.toISOString().substr(0, 10);
-            }
-        });
-        
-        // Mettre à jour l'explication de fréquence
+
+        // Fonction pour mettre à jour l'explication de fréquence
         function updateFrequenceExplication() {
             {% if form.periodicite is defined and form.frequencePeriode is defined %}
-            const periodicite = document.getElementById('{{ form.periodicite.vars.id }}').value;
-            const frequence = document.getElementById('{{ form.frequencePeriode.vars.id }}').value;
-            
+            const periodicite = document.getElementById('{{ form.periodicite.vars.id }}');
+            const frequence = document.getElementById('{{ form.frequencePeriode.vars.id }}');
+
+            if (periodicite && frequence) {
+                const periodiciteValue = periodicite.value;
+                const frequenceValue = frequence.value;
+
             let typeText, unitText;
-            
-            switch(periodicite) {
+
+            switch (periodiciteValue) {
                 case 'journalier':
                     typeText = 'journalière';
-                    unitText = frequence > 1 ? 'jours' : 'jour';
+                    unitText = frequenceValue > 1 ? 'jours' : 'jour';
                     break;
                 case 'hebdomadaire':
                     typeText = 'hebdomadaire';
-                    unitText = frequence > 1 ? 'semaines' : 'semaine';
+                    unitText = frequenceValue > 1 ? 'semaines' : 'semaine';
                     break;
                 case 'mensuel':
                     typeText = 'mensuelle';
-                    unitText = frequence > 1 ? 'mois' : 'mois';
+                    unitText = frequenceValue > 1 ? 'mois' : 'mois';
                     break;
                 default:
                     typeText = 'personnalisée';
                     unitText = 'période(s)';
             }
-            
+
             document.querySelector('.frequency-type').textContent = typeText;
-            document.querySelector('.frequency-value').textContent = frequence;
+            document.querySelector('.frequency-value').textContent = frequenceValue;
             document.querySelector('.frequency-unit').textContent = unitText;
-            
-            // Écouter les changements de périodicité et de fréquence
-            document.getElementById('{{ form.periodicite.vars.id }}').addEventListener('change', updateFrequenceExplication);
-            document.getElementById('{{ form.frequencePeriode.vars.id }}').addEventListener('change', updateFrequenceExplication);
+}
             {% endif %}
         }
+
+        // Ajouter des écouteurs d'événements
+        document.getElementById('{{ form.typeCotisation.vars.id }}').addEventListener('change', function() {
+toggleTypeCotisationSections();
+            updateFrequenceExplication();
+        });
+
+        {% if form.periodicite is defined and form.frequencePeriode is defined %}
+        document.getElementById('{{ form.periodicite.vars.id }}').addEventListener('change', updateFrequenceExplication);
+        document.getElementById('{{ form.frequencePeriode.vars.id }}').addEventListener('change', updateFrequenceExplication);
+        {% endif %}
     </script>
 {% endblock %}

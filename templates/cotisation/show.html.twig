@@ -1,97 +1,1000 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails de la Cotisation{% endblock %}
+{% block title %}Détails de la Cotisation - CollabÉpargne{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/listecotisation.css') }}">
+    <style>
+        /* Styles spécifiques pour la page de détails */
+        .edit-title-btn {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            margin-left: 1rem;
+            vertical-align: middle;
+        }
+        
+        .tab-navigation {
+            display: flex;
+            border-bottom: 1px solid var(--form-border);
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+        
+        .tab-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        
+        .tab-item:hover {
+            color: var(--secondary-color);
+        }
+        
+        .tab-item.active {
+            border-bottom-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .detail-table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .detail-table th {
+            background-color: rgba(26, 82, 118, 0.05);
+            width: 30%;
+            padding: 1rem;
+            text-align: left;
+            color: var(--primary-color);
+        }
+        
+        .detail-table td {
+            padding: 1rem;
+            background-color: white;
+        }
+        
+        .detail-table tr:not(:last-child) th,
+        .detail-table tr:not(:last-child) td {
+            border-bottom: 1px solid var(--form-border);
+        }
+        
+        /* Styles pour les membres */
+        .member-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .member-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .member-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 1rem;
+        }
+        
+        .member-info {
+            flex: 1;
+        }
+        
+        .member-name {
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        
+        .member-phone {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .member-status {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        .member-status.pending {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+        
+        /* Styles pour l'historique des paiements */
+        .payment-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--secondary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+        }
+        
+        .payment-date {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .payment-amount {
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+        
+        .payment-member {
+            display: flex;
+            align-items: center;
+        }
+        
+        .payment-status {
+            margin-left: auto;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        /* Modal d'ajout de membre */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            padding: 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            animation: modalFadeIn 0.3s ease forwards;
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--form-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--form-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        /* Animation pour le modal */
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .tab-navigation {
+                padding-bottom: 0.5rem;
+            }
+            
+            .tab-item {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* Edit title modal */
+        .edit-title-form {
+            margin-top: 1rem;
+        }
+        
+        /* Styles pour le titre éditible */
+        .editable-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .editable-title h2 {
+            margin: 0;
+            margin-right: 1rem;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <h1>Détails de la Cotisation</h1>
-
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">{{ cotisation.titre }}</h5>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">Collab<span>Épargne</span></div>
+            <div class="user-info">
+                <img src="{{ asset('image/profile.png') }}" alt="User" class="user-avatar">
+                <div class="user-details">
+                    <div class="user-name">{{ app.user.nom }} {{ app.user.prenom }}</div>
+                    <div class="user-status">Membre actif</div>
+                </div>
             </div>
-            <div class="card-body">
-                <table class="table">
-                    <tbody>
-                        <tr>
-                            <th>ID</th>
-                            <td>{{ cotisation.id }}</td>
-                        </tr>
-                        <tr>
-                            <th>Titre</th>
-                            <td>{{ cotisation.titre }}</td>
-                        </tr>
-                        <tr>
-                            <th>Type de cotisation</th>
-                            <td>
-                                {% if cotisation.typeCotisation == 'periodique' %}
-                                    Cotisation régulière (montant fixe)
-                                {% elseif cotisation.typeCotisation == 'souscription' %}
-                                Contribution libre (montant minimum)
-                                {% else %}
-                                    {{ cotisation.typeCotisation }}
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Description</th>
-                            <td>{{ cotisation.description }}</td>
-                        </tr>
-                        <tr>
-                            <th>Montant objectif</th>
-                            <td>{{ cotisation.montantObjectif|number_format(2, ',', ' ') }} €</td>
-                        </tr>
-                        <tr>
-                            <th>Montant minimum</th>
-                            <td>{{ cotisation.montantMinimum|number_format(2, ',', ' ') }} €</td>
-                        </tr>
-                        {% if cotisation.typeCotisation == 'periodique' %}
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">🏠</span>
+                <span><a href="{{ path('app_utilisateur') }}">Tableau de bord</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">➕</span>
+                <span><a href="{{ path('app_cotisation_new') }}">Créer une cotisation</a></span>
+            </li>
+            <li class="sidebar-menu-item active">
+                <span class="menu-icon">👥</span>
+                <span><a href="{{ path('app_cotisation_index') }}">Mes cotisations</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📊</span>
+                <span><a href="#">Historique des contributions</a></span>
+            </li>
+            <li class="sidebar-menu-item">
+                <span class="menu-icon">📅</span>
+                <span><a href="{{ path('app_echeance') }}">Échéances</a></span>
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="sidebar-menu-item">
+                <span class="menu-icon">🚪</span>
+                <span><a href="{{ path('app_logout') }}" class="btn btn-danger">Déconnexion</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <button class="sidebar-toggle" id="sidebar-toggle">👥</button>
+            <h1 class="page-title">Détails de la Cotisation</h1>
+            <div class="action-buttons">
+                <a href="{{ path('app_cotisation_index') }}" class="btn btn-outline">
+                    <span class="btn-icon">↩️</span>
+                    Retour à la liste
+                </a>
+                
+
+                <button id="addMemberBtn" class="btn btn-primary">
+                    <span class="btn-icon">➕</span>
+                    Ajouter un membre
+                </button>
+
+            </div>
+        </div>
+        
+        <!-- Mobile Action Buttons -->
+        <div class="mobile-actions" style="display: none;">
+            <a href="{{ path('app_cotisation_index') }}" style="width: 100%; text-decoration: none;">
+                <button class="btn btn-outline" style="width: 100%; margin-bottom: 1rem;">
+                    <span class="btn-icon">↩️</span>
+                    Retour à la liste
+                </button>
+            </a>
+            
+                
+            <button id="addMemberBtnMobile" class="btn btn-primary" style="width: 100%;">
+                <span class="btn-icon">➕</span>
+                Ajouter un membre
+            </button>
+
+        </div>
+        
+        <!-- Alerts -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="form-section">
+                <div class="editable-title">
+                    <h2>{{ cotisation.titre }}</h2>
+
+                    <button class="btn btn-sm btn-outline edit-title-btn" id="editTitleBtn">
+                        <span class="btn-icon">✏️</span>
+                        Modifier
+                    </button>
+
+                </div>
+                
+                <!-- Navigation par onglets -->
+                <div class="tab-navigation">
+                    <div class="tab-item active" data-tab="details">Détails de la cotisation</div>
+                    <div class="tab-item" data-tab="members">Membres</div>
+                    <div class="tab-item" data-tab="payments">Paiements</div>
+                </div>
+                
+                <!-- Tab Content: Détails -->
+                <div class="tab-content active" id="details-tab">
+                    <table class="detail-table">
+                        <tbody>
                             <tr>
-                                <th>Montant par échéance</th>
-                                <td>{{ cotisation.montantParEcheance|number_format(2, ',', ' ') }} €</td>
-                            </tr>
-                            <tr>
-                                <th>Périodicité</th>
+                                <th>Type de cotisation</th>
                                 <td>
-                                    {% if cotisation.periodicite == 'journalier' %}
-                                        Journalier
-                                    {% elseif cotisation.periodicite == 'hebdomadaire' %}
-                                        Hebdomadaire
-                                    {% elseif cotisation.periodicite == 'mensuel' %}
-                                        Mensuel
+                                    {% if cotisation.typeCotisation == 'periodique' %}
+                                        Cotisation régulière (montant fixe)
+                                    {% elseif cotisation.typeCotisation == 'souscription' %}
+                                        Contribution libre (montant minimum)
                                     {% else %}
-                                        {{ cotisation.periodicite }}
+                                        {{ cotisation.typeCotisation }}
                                     {% endif %}
                                 </td>
                             </tr>
                             <tr>
-                                <th>Fréquence de période</th>
-                                <td>{{ cotisation.frequencePeriode }}</td>
+                                <th>Description</th>
+                                <td>{{ cotisation.description }}</td>
                             </tr>
-                        {% endif %}
-                        <tr>
-                            <th>Date de début</th>
-                            <td>{{ cotisation.dateDebut ? cotisation.dateDebut|date('d/m/Y H:i') : '' }}</td>
-                        </tr>
-                        <tr>
-                            <th>Date de fin</th>
-                            <td>{{ cotisation.dateFin ? cotisation.dateFin|date('d/m/Y H:i') : 'Indéfinie' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="d-flex justify-content-between">
-            <a href="{{ path('app_cotisation_index') }}" class="btn btn-secondary">Retour à la liste</a>
-            <div>
-                <a href="{{ path('app_cotisation_edit', {'id': cotisation.id}) }}" class="btn btn-warning">Modifier</a>
+                            <tr>
+                                <th>Montant objectif</th>
+                                <td>{{ cotisation.montantObjectif|number_format(0, ',', ' ') }} FCFA</td>
+                            </tr>
+                            <tr>
+                                <th>Montant minimum</th>
+                                <td>{{ cotisation.montantMinimum|number_format(0, ',', ' ') }} FCFA</td>
+                            </tr>
+                            {% if cotisation.typeCotisation == 'periodique' %}
+                                <tr>
+                                    <th>Montant par échéance</th>
+                                    <td>{{ cotisation.montantParEcheance|number_format(0, ',', ' ') }} FCFA</td>
+                                </tr>
+                                <tr>
+                                    <th>Périodicité</th>
+                                    <td>
+                                        {% if cotisation.periodicite == 'journalier' %}
+                                            Journalier
+                                        {% elseif cotisation.periodicite == 'hebdomadaire' %}
+                                            Hebdomadaire
+                                        {% elseif cotisation.periodicite == 'mensuel' %}
+                                            Mensuel
+                                        {% else %}
+                                            {{ cotisation.periodicite }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Fréquence de période</th>
+                                    <td>{{ cotisation.frequencePeriode }}</td>
+                                </tr>
+                            {% endif %}
+                            <tr>
+                                <th>Date de début</th>
+                                <td>{{ cotisation.dateDebut ? cotisation.dateDebut|date('d/m/Y') : '' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date de fin</th>
+                                <td>{{ cotisation.dateFin ? cotisation.dateFin|date('d/m/Y') : 'Indéfinie' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Créé par</th>
+                                <td>{{ app.user.nom }} {{ app.user.prenom }}</td>
+                            </tr>
+                            <tr>
+                        </tbody>
+                    </table>
+                </div>
                 
-                <form method="post" action="{{ path('app_cotisation_delete', {'id': cotisation.id}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette cotisation?');">
-                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ cotisation.id) }}">
-                    <button class="btn btn-danger">Supprimer</button>
-                </form>
+                <!-- Tab Content: Membres -->
+                <div class="tab-content" id="members-tab">
+                    <div class="member-list">
+                        {% if members is defined and members|length > 0 %}
+                            {% for member in members %}
+                                <div class="member-card">
+                                    <div class="member-avatar">{{ member.nom|first }}{{ member.prenom|first }}</div>
+                                    <div class="member-info">
+                                        <div class="member-name">{{ member.nom }} {{ member.prenom }}</div>
+                                        <div class="member-phone">{{ member.telephone }}</div>
+                                    </div>
+                                    <div class="member-status">Actif</div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <p>Aucun membre n'a encore rejoint cette cotisation.</p>
+                                    <button id="emptyAddMemberBtn" class="btn btn-primary">
+                                        <span class="btn-icon">➕</span>
+                                        Ajouter un membre
+                                    </button>
+
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Exemple de membres en attente (pour démo) -->
+                        <div class="member-card">
+                            <div class="member-avatar">MP</div>
+                            <div class="member-info">
+                                <div class="member-name">Marie Paule</div>
+                                <div class="member-phone">+221 77 123 45 67</div>
+                            </div>
+                            <div class="member-status">Actif</div>
+                        </div>
+                        
+                        <div class="member-card">
+                            <div class="member-avatar">AS</div>
+                            <div class="member-info">
+                                <div class="member-name">Amadou Sow</div>
+                                <div class="member-phone">+221 70 987 65 43</div>
+                            </div>
+                            <div class="member-status pending">En attente</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tab Content: Paiements -->
+                <div class="tab-content" id="payments-tab">
+                    {% if payments is defined and payments|length > 0 %}
+                        {% for payment in payments %}
+                            <div class="payment-card">
+                                <div class="payment-header">
+                                    <div class="payment-date">{{ payment.date|date('d/m/Y H:i') }}</div>
+                                    <div class="payment-amount">{{ payment.montant|number_format(0, ',', ' ') }} FCFA</div>
+                                </div>
+                                <div class="payment-member">
+                                    <div class="member-avatar">{{ payment.membre.nom|first }}{{ payment.membre.prenom|first }}</div>
+                                    <div class="member-name">{{ payment.membre.nom }} {{ payment.membre.prenom }}</div>
+                                    <div class="payment-status">Payé</div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Exemples de paiements (pour démo) -->
+                        <div class="payment-card">
+                            <div class="payment-header">
+                                <div class="payment-date">12/04/2025 14:30</div>
+                                <div class="payment-amount">15 000 FCFA</div>
+                            </div>
+                            <div class="payment-member">
+                                <div style="width: 35px; height: 35px; background-color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-right: 10px;">MP</div>
+                                <div>Marie Paule</div>
+                                <div class="payment-status">Payé</div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-card">
+                            <div class="payment-header">
+                                <div class="payment-date">05/04/2025 09:15</div>
+                                <div class="payment-amount">15 000 FCFA</div>
+                            </div>
+                            <div class="payment-member">
+                                <div style="width: 35px; height: 35px; background-color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-right: 10px;">FD</div>
+                                <div>Fatou Diop</div>
+                                <div class="payment-status">Payé</div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
+    
+    <!-- Modal pour l'ajout d'un membre -->
+    <div class="modal-overlay" id="addMemberModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Ajouter un membre</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="memberPhone">Numéro de téléphone</label>
+                    <input type="text" id="memberPhone" class="form-control" placeholder="+229 XX XXX XX XX">
+                    <small class="form-helper">Saisissez le numéro de téléphone du membre à ajouter</small>
+                </div>
+                
+                <div id="memberSearchResult" style="display: none; margin-top: 1.5rem;">
+                    <div class="member-card" id="foundMember" style="display: none;">
+                        <div class="member-avatar" id="memberInitials">--</div>
+                        <div class="member-info">
+                            <div class="member-name" id="memberName">Nom du membre</div>
+                            <div class="member-phone" id="memberPhoneDisplay">Numéro de téléphone</div>
+                        </div>
+                    </div>
+                    
+                    <div id="notFoundMessage" style="display: none;">
+                        <p>Aucun utilisateur trouvé avec ce numéro.</p>
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <button id="sendInvitation" class="btn btn-outline">
+                                <span class="btn-icon">✉️</span>
+                                Envoyer une invitation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelAddMember" class="btn btn-outline">Annuler</button>
+                <button id="searchMember" class="btn btn-primary">Rechercher</button>
+                <button id="confirmAddMember" class="btn btn-success" style="display: none;">Ajouter à la cotisation</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal pour modifier le titre -->
+    <div class="modal-overlay" id="editTitleModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Modifier le titre</h3>
+                <button class="modal-close" id="closeTitleModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="cotisationTitle">Titre de la cotisation</label>
+                    <input type="text" id="cotisationTitle" class="form-control" value="{{ cotisation.titre }}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelEditTitle" class="btn btn-outline">Annuler</button>
+                <button id="saveTitleBtn" class="btn btn-success">Enregistrer</button>
+            </div>
+        </div>
+        
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion de la sidebar
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const mainContent = document.querySelector('.main-content');
+            const mobileActions = document.querySelector('.mobile-actions');
+            
+            // Afficher ou masquer les actions mobiles
+            function checkMobileView() {
+                if (window.innerWidth <= 768) {
+                    mobileActions.style.display = 'block';
+                } else {
+                    mobileActions.style.display = 'none';
+                }
+            }
+            
+            checkMobileView();
+            window.addEventListener('resize', checkMobileView);
+            
+            // Toggle sidebar
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+            
+            // Navigation par onglets
+            const tabItems = document.querySelectorAll('.tab-item');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Désactiver tous les onglets et contenus
+                    tabItems.forEach(tab => tab.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Activer l'onglet et le contenu sélectionnés
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Modal d'ajout de membre
+            const addMemberBtn = document.getElementById('addMemberBtn');
+            const addMemberBtnMobile = document.getElementById('addMemberBtnMobile');
+            const emptyAddMemberBtn = document.getElementById('emptyAddMemberBtn');
+            const addMemberModal = document.getElementById('addMemberModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelAddMember = document.getElementById('cancelAddMember');
+            const searchMember = document.getElementById('searchMember');
+            const confirmAddMember = document.getElementById('confirmAddMember');
+            const memberSearchResult = document.getElementById('memberSearchResult');
+            const foundMember = document.getElementById('foundMember');
+            const notFoundMessage = document.getElementById('notFoundMessage');
+            const memberPhone = document.getElementById('memberPhone');
+            
+            function openAddMemberModal() {
+                addMemberModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeAddMemberModal() {
+                addMemberModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                
+                // Réinitialiser le formulaire
+                memberPhone.value = '';
+                memberSearchResult.style.display = 'none';
+                foundMember.style.display = 'none';
+                notFoundMessage.style.display = 'none';
+                confirmAddMember.style.display = 'none';
+                searchMember.style.display = 'block';
+            }
+            
+            if (addMemberBtn) {
+                addMemberBtn.addEventListener('click', openAddMemberModal);
+            }
+            
+            if (addMemberBtnMobile) {
+                addMemberBtnMobile.addEventListener('click', openAddMemberModal);
+            }
+            
+            if (emptyAddMemberBtn) {
+                emptyAddMemberBtn.addEventListener('click', openAddMemberModal);
+            }
+            
+            closeModal.addEventListener('click', closeAddMemberModal);
+            cancelAddMember.addEventListener('click', closeAddMemberModal);
+            
+            // Rechercher un membre
+            searchMember.addEventListener('click', function() {
+                const phoneNumber = memberPhone.value.trim();
+                
+                if (!phoneNumber) {
+                    alert('Veuillez saisir un numéro de téléphone.');
+                    return;
+                }
+                
+                // Simulation de recherche (à remplacer par une véritable requête AJAX)
+                setTimeout(() => {
+                    memberSearchResult.style.display = 'block';
+                    
+                    // Simuler un résultat trouvé ou non (à des fins de démonstration)
+                    if (phoneNumber.includes('77')) {
+                        // Membre trouvé
+                        foundMember.style.display = 'flex';
+                        notFoundMessage.style.display = 'none';
+                        confirmAddMember.style.display = 'block';
+                        searchMember.style.display = 'none';
+                        
+                        // Afficher les informations du membre
+                        document.getElementById('memberInitials').textContent = 'MP';
+                        document.getElementById('memberName').textContent = 'Marie Paule';
+                        document.getElementById('memberPhoneDisplay').textContent = phoneNumber;
+                    } else {
+                        // Membre non trouvé
+                        foundMember.style.display = 'none';
+                        notFoundMessage.style.display = 'block';
+                        confirmAddMember.style.display = 'none';
+                        searchMember.style.display = 'block';
+                    }
+                }, 500);
+            });
+            
+               
+            
+            });
+            
+            // Modal de modification du titre
+            const editTitleBtn = document.getElementById('editTitleBtn');
+            const editTitleModal = document.getElementById('editTitleModal');
+            const closeTitleModal = document.getElementById('closeTitleModal');
+            const cancelEditTitle = document.getElementById('cancelEditTitle');
+            const saveTitleBtn = document.getElementById('saveTitleBtn');
+            const cotisationTitle = document.getElementById('cotisationTitle');
+            
+            function openEditTitleModal() {
+                editTitleModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeEditTitleModal() {
+                editTitleModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            
+            if (editTitleBtn) {
+                editTitleBtn.addEventListener('click', openEditTitleModal);
+            }
+            
+            closeTitleModal.addEventListener('click', closeEditTitleModal);
+            cancelEditTitle.addEventListener('click', closeEditTitleModal);
+            
+            // Enregistrer le nouveau titre
+            saveTitleBtn.addEventListener('click', function() {
+                const newTitle = cotisationTitle.value.trim();
+                
+                if (!newTitle) {
+                    alert('Veuillez saisir un titre.');
+                    return;
+                }
+                
+                // Effectuer une requête AJAX pour mettre à jour le titre
+                const formData = new FormData();
+                formData.append('titre', newTitle);
+                formData.append('id', '{{ cotisation.id }}');
+                
+                fetch('{{ path('app_cotisation_new') }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Mettre à jour le titre sur la page
+                        document.querySelector('.editable-title h2').textContent = newTitle;
+                        closeEditTitleModal();
+                        
+                        // Afficher un message de succès
+                        const alertContainer = document.createElement('div');
+                        alertContainer.className = 'alert alert-success';
+                        alertContainer.textContent = 'Le titre a été mis à jour avec succès !';
+                        
+                        // Insérer l'alerte après le header
+                        const header = document.querySelector('.header');
+                        header.parentNode.insertBefore(alertContainer, header.nextSibling);
+                        
+                        // Faire disparaître l'alerte après 3 secondes
+                        setTimeout(() => {
+                            alertContainer.style.opacity = '0';
+                            setTimeout(() => {
+                                alertContainer.remove();
+                            }, 500);
+                        }, 3000);
+                    } else {
+                        alert('Une erreur est survenue lors de la mise à jour du titre.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    alert('Une erreur est survenue lors de la mise à jour du titre.');
+                });
+            });
+            
+            // Ajout d'animations pour les cartes
+            const memberCards = document.querySelectorAll('.member-card');
+            const paymentCards = document.querySelectorAll('.payment-card');
+            
+            // Animation lors du survol sur les cartes de membres
+            memberCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.2s ease';
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.05)';
+                });
+            });
+            
+            // Animation lors du survol sur les cartes de paiements
+            paymentCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.2s ease';
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.05)';
+                });
+            });
+            
+            // Support pour les appareils mobiles - fermer le menu latéral lors d'un clic en dehors
+            document.addEventListener('click', function(event) {
+                const isClickInside = sidebar.contains(event.target);
+                const isToggleClick = sidebarToggle.contains(event.target);
+                
+                if (!isClickInside && !isToggleClick && sidebar.classList.contains('active') && window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                }
+            });
+            
+            // Fonction pour calculer la progression
+            function updateProgress() {
+                // Simuler les données de progression (à remplacer par de vraies données)
+                const totalAmount = 150000; // Montant total collecté
+                const objective = {{ cotisation.montantObjectif }}; // Objectif
+                const progress = Math.min(100, Math.round((totalAmount / objective) * 100));
+                
+                // Mettre à jour l'affichage de la progression si nécessaire
+                // À implémenter selon les besoins
+            }
+            
+            // Appeler updateProgress() au chargement de la page
+            updateProgress();
+            
+            // Activer les interactions tactiles pour les onglets sur mobile
+            tabItems.forEach(item => {
+                item.addEventListener('touchstart', function() {
+                    this.classList.add('touch-active');
+                });
+                
+                item.addEventListener('touchend', function() {
+                    this.classList.remove('touch-active');
+                });
+            });
+            
+            // Fonction pour gérer les événements de scroll dans les listes
+            function handleScroll() {
+                const memberList = document.querySelector('.member-list');
+                
+                if (memberList) {
+                    memberList.addEventListener('scroll', function() {
+                        // Ajouter une gestion de défilement ici si nécessaire
+                        // Par exemple, chargement paresseux de plus de membres
+                    });
+                }
+            }
+            
+            // Appeler handleScroll() au chargement de la page
+            handleScroll();
+        });
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion du modal d'ajout de membre
+        const addMemberBtn = document.getElementById('addMemberBtn');
+        const addMemberBtnMobile = document.getElementById('addMemberBtnMobile');
+        const emptyAddMemberBtn = document.getElementById('emptyAddMemberBtn');
+        const addMemberModal = document.getElementById('addMemberModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelAddMember = document.getElementById('cancelAddMember');
+
+        // Fonction pour ouvrir le modal
+        function openAddMemberModal() {
+            addMemberModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Empêche le défilement en arrière-plan
+        }
+
+        // Fonction pour fermer le modal
+        function closeAddMemberModal() {
+            addMemberModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Réactive le défilement en arrière-plan
+        }
+
+        // Ajouter les événements pour ouvrir le modal
+        if (addMemberBtn) {
+            addMemberBtn.addEventListener('click', openAddMemberModal);
+        }
+        if (addMemberBtnMobile) {
+            addMemberBtnMobile.addEventListener('click', openAddMemberModal);
+        }
+        if (emptyAddMemberBtn) {
+            emptyAddMemberBtn.addEventListener('click', openAddMemberModal);
+        }
+
+        // Ajouter les événements pour fermer le modal
+        if (closeModal) {
+            closeModal.addEventListener('click', closeAddMemberModal);
+        }
+        if (cancelAddMember) {
+            cancelAddMember.addEventListener('click', closeAddMemberModal);
+        }
+
+        // Fermer le modal si on clique en dehors de celui-ci
+        window.addEventListener('click', function(event) {
+            if (event.target === addMemberModal) {
+                closeAddMemberModal();
+            }
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Gestion du modal de modification du titre
+        const editTitleBtn = document.getElementById('editTitleBtn');
+        const editTitleModal = document.getElementById('editTitleModal');
+        const closeTitleModal = document.getElementById('closeTitleModal');
+        const cancelEditTitle = document.getElementById('cancelEditTitle');
+
+        // Fonction pour ouvrir le modal
+        function openEditTitleModal() {
+            editTitleModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Empêche le défilement en arrière-plan
+        }
+
+        // Fonction pour fermer le modal
+        function closeEditTitleModal() {
+            editTitleModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Réactive le défilement en arrière-plan
+        }
+
+        // Ajouter les événements pour ouvrir le modal
+        if (editTitleBtn) {
+            editTitleBtn.addEventListener('click', openEditTitleModal);
+        }
+
+        // Ajouter les événements pour fermer le modal
+        if (closeTitleModal) {
+            closeTitleModal.addEventListener('click', closeEditTitleModal);
+        }
+        if (cancelEditTitle) {
+            cancelEditTitle.addEventListener('click', closeEditTitleModal);
+        }
+
+        // Fermer le modal si on clique en dehors de celui-ci
+        window.addEventListener('click', function(event) {
+            if (event.target === editTitleModal) {
+                closeEditTitleModal();
+            }
+        });
+    });
+</script>
 {% endblock %}

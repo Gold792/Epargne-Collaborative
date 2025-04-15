@@ -77,6 +77,20 @@ class CotisationType extends AbstractType
                 'attr' => [
                     'class' => 'form-control'
                 ]
+            ])
+            ->add('periodicite', ChoiceType::class, [
+                'label' => 'Périodicité',
+                'choices' => Cotisation::getPeriodicites(),
+                'attr' => [
+                    'class' => 'form-select'
+                ]
+            ])
+            ->add('frequencePeriode', ChoiceType::class, [
+                'label' => 'Fréquence de période',
+                'choices' => Cotisation::getFrequencesPeriode(),
+                'attr' => [
+                    'class' => 'form-select'
+                ]
             ]);
 
         // Ajout des champs conditionnels en fonction du type de cotisation
@@ -109,21 +123,8 @@ class CotisationType extends AbstractType
             'attr' => [
                 'class' => 'form-control'
             ]
-        ])
-        ->add('periodicite', ChoiceType::class, [
-            'label' => 'Périodicité',
-            'choices' => Cotisation::getPeriodicites(),
-            'attr' => [
-                'class' => 'form-select'
-            ]
-        ])
-        ->add('frequencePeriode', ChoiceType::class, [
-            'label' => 'Fréquence de période',
-            'choices' => Cotisation::getFrequencesPeriode(),
-            'attr' => [
-                'class' => 'form-select'
-            ]
-        ]);
+            ]);
+        
     }
 
     public function configureOptions(OptionsResolver $resolver): void
