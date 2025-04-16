@@ -463,50 +463,29 @@
                 </div>
                 
                 <!-- Tab Content: Membres -->
-                <div class="tab-content" id="members-tab">
-                    <div class="member-list">
-                        {% if members is defined and members|length > 0 %}
-                            {% for member in members %}
-                                <div class="member-card">
-                                    <div class="member-avatar">{{ member.nom|first }}{{ member.prenom|first }}</div>
-                                    <div class="member-info">
-                                        <div class="member-name">{{ member.nom }} {{ member.prenom }}</div>
-                                        <div class="member-phone">{{ member.telephone }}</div>
-                                    </div>
-                                    <div class="member-status">Actif</div>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            <div class="empty-state">
-                                {# <p>Aucun membre n'a encore rejoint cette cotisation.</p> #}
-                                    <button id="emptyAddMemberBtn" class="btn btn-primary">
-                                        <span class="btn-icon">➕</span>
-                                        Ajouter un membre
-                                    </button>
-
-                            </div>
-                        {% endif %}
-                        
-                        <!-- Exemple de membres en attente (pour démo) -->
-                        <div class="member-card">
-                            <div class="member-avatar">LP</div>
-                            <div class="member-info">
-                                <div class="member-name">LANMAI Prince</div>
-                                <div class="member-phone">+229 01 xx xxx xx</div>
-                            </div>
-                            <div class="member-status">Actif</div>
-                        </div>
-                        
-                        <div class="member-card">
-                            <div class="member-avatar">OM</div>
-                            <div class="member-info">
-                                <div class="member-name">OLOUKOSSI Manzidath</div>
-                                <div class="member-phone">+229 01 99 xxx xx</div>
-                            </div>
-                            <div class="member-status pending">En attente</div>
-                        </div>
+<div class="tab-content" id="members-tab">
+    <div class="member-list">
+        {% if cotisation.participations is defined and cotisation.participations|length > 0 %}
+            {% for participation in cotisation.participations %}
+                <div class="member-card">
+                    <div class="member-avatar">{{ participation.utilisateur.nom|first }}{{ participation.utilisateur.prenom|first }}</div>
+                    <div class="member-info">
+                        <div class="member-name">{{ participation.utilisateur.nom }} {{ participation.utilisateur.prenom }}</div>
+                        <div class="member-phone">{{ participation.utilisateur.telephone }}</div>
                     </div>
+                    <div class="member-status">{{ participation.proprietaire ? 'Propriétaire' : 'Membre' }}</div>
                 </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <button id="emptyAddMemberBtn" class="btn btn-primary">
+                    <span class="btn-icon">➕</span>
+                    Ajouter un membre
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</div>
                 
                 <!-- Tab Content: Paiements -->
                 <div class="tab-content" id="payments-tab">
@@ -715,49 +694,93 @@
             cancelAddMember.addEventListener('click', closeAddMemberModal);
             
             // Rechercher un membre
-            searchMember.addEventListener('click', function() {
-                const phoneNumber = memberPhone.value.trim();
+            // Dans votre fichier JavaScript
+searchMember.addEventListener('click', function() {
+    const phoneNumber = memberPhone.value.trim();
 
-                // Vérifier que le numéro contient au moins 10 chiffres
-                if (phoneNumber.length < 10) {
-                    alert('Veuillez saisir un numéro de téléphone valide (au moins 10 chiffres).');
-                    return;
-                }
-                
-                // Simulation de recherche (à remplacer par une véritable requête AJAX)
-                setTimeout(() => {
-                    memberSearchResult.style.display = 'block';
-                    
-                    // Simuler un résultat trouvé ou non
-                    if (phoneNumber === '0151436520') {
-                        // Membre trouvé
-                        foundMember.style.display = 'flex';
-                        notFoundMessage.style.display = 'none';
-                        confirmAddMember.style.display = 'block';
-                        
-                        // Afficher les informations du membre
-                        document.getElementById('memberInitials').textContent = 'LP';
-                        document.getElementById('memberName').textContent = 'LANMAI Prince';
-                        document.getElementById('memberPhoneDisplay').textContent = phoneNumber;
-                    } else if (phoneNumber === '0153999658') {
-                        // Membre trouvé : OLOUKOSSI Manzidath
-                        foundMember.style.display = 'flex';
-                        notFoundMessage.style.display = 'none';
-                        confirmAddMember.style.display = 'block';
+    // Vérifier que le numéro contient au moins 10 chiffres
+    if (phoneNumber.length < 8) { // Adapté au format de téléphone local
+        alert('Veuillez saisir un numéro de téléphone valide.');
+        return;
+    }
+    
+    // Faire une vraie requête AJAX au serveur
+    fetch('{{ path('app_search_member') }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: new URLSearchParams({
+            'phone': phoneNumber
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        memberSearchResult.style.display = 'block';
+        
+        if (data.found) {
+            // Membre trouvé
+            foundMember.style.display = 'flex';
+            notFoundMessage.style.display = 'none';
+            confirmAddMember.style.display = 'block';
+            
+            // Afficher les informations du membre
+            document.getElementById('memberInitials').textContent = data.user.initials;
+            document.getElementById('memberName').textContent = data.user.nom + ' ' + data.user.prenom;
+            document.getElementById('memberPhoneDisplay').textContent = data.user.telephone;
+            
+            // Stocker l'ID utilisateur pour l'ajout
+            confirmAddMember.setAttribute('data-user-id', data.user.id);
+        } else {
+            // Membre non trouvé
+            foundMember.style.display = 'none';
+            notFoundMessage.style.display = 'block';
+            confirmAddMember.style.display = 'none';
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la recherche.');
+    });
+});
 
-                        // Afficher les informations du membre
-                        document.getElementById('memberInitials').textContent = 'OM';
-                        document.getElementById('memberName').textContent = 'OLOUKOSSI Manzidath';
-                        document.getElementById('memberPhoneDisplay').textContent = phoneNumber;
-                    } else {
-                        // Membre non trouvé
-                        foundMember.style.display = 'none';
-                        notFoundMessage.style.display = 'block';
-                        confirmAddMember.style.display = 'none';
-                        searchMember.style.display = 'block';
-                    }
-                }, 500);
-            });
+// Gérer l'ajout du membre
+confirmAddMember.addEventListener('click', function() {
+    const userId = this.getAttribute('data-user-id');
+    const cotisationId = '{{ cotisation.id }}';
+    
+    fetch(`/cotisation/${cotisationId}/add-member/${userId}`, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Fermer le modal
+            closeAddMemberModal();
+            
+            // Afficher un message de succès
+            const alertContainer = document.createElement('div');
+            alertContainer.className = 'alert alert-success';
+            alertContainer.textContent = 'Le membre a été ajouté avec succès.';
+            document.querySelector('.header').parentNode.insertBefore(alertContainer, document.querySelector('.header').nextSibling);
+            
+            // Actualiser la liste des membres (ou recharger la page)
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } else {
+            alert(data.message || 'Une erreur est survenue lors de l\'ajout du membre.');
+        }
+    })
+    .catch(error => {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de l\'ajout du membre.');
+    });
+});
             
                
             

@@ -38,4 +38,39 @@ class CotisationRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    // Dans App\Repository\CotisationRepository
+
+public function findCotisationsForUser($utilisateur)
+{
+    return $this->createQueryBuilder('c')
+        ->join('App\Entity\Participer', 'p', 'WITH', 'c.id = p.cotisation')
+        ->where('p.utilisateur = :utilisateur')
+        ->setParameter('utilisateur', $utilisateur)
+        ->getQuery()
+        ->getResult();
+}
+
+// Optionnel: méthode pour différencier entre propriétaire et membre
+public function findCotisationsCreatedByUser($utilisateur)
+{
+    return $this->createQueryBuilder('c')
+        ->join('App\Entity\Participer', 'p', 'WITH', 'c.id = p.cotisation')
+        ->where('p.utilisateur = :utilisateur')
+        ->andWhere('p.proprietaire = true')
+        ->setParameter('utilisateur', $utilisateur)
+        ->getQuery()
+        ->getResult();
+}
+
+public function findCotisationsJoinedByUser($utilisateur)
+{
+    return $this->createQueryBuilder('c')
+        ->join('App\Entity\Participer', 'p', 'WITH', 'c.id = p.cotisation')
+        ->where('p.utilisateur = :utilisateur')
+        ->andWhere('p.proprietaire = false')
+        ->setParameter('utilisateur', $utilisateur)
+        ->getQuery()
+        ->getResult();
+}
 }

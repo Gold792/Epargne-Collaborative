@@ -59,6 +59,19 @@ class Cotisation
     public const PERIODICITE_HEBDOMADAIRE = 'hebdomadaire';
     public const PERIODICITE_MENSUEL = 'mensuel';
 
+    // Dans App\Entity\Cotisation
+
+    // Propriété pour stocker le créateur
+    #[ORM\ManyToOne(targetEntity: Utilisateur::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private $createur;
+
+// Collection des participations
+    #[ORM\OneToMany(mappedBy: 'cotisation', targetEntity: Participer::class, orphanRemoval: true)]
+    private $participations;
+
+// Getters et setters...
+
     public function __construct()
     {
         $this->dateDebut = new \DateTime();
@@ -189,6 +202,17 @@ class Cotisation
         return $this;
     }
 
+    public function getCreateur(): ?Utilisateur
+    {
+        return $this->createur;
+    }
+
+    public function setCreateur(Utilisateur $createur): self
+    {
+        $this->createur = $createur;
+        return $this;
+    }
+
     // Méthode pour obtenir les types de cotisation disponibles
     public static function getTypesCotisation(): array
     {
@@ -217,4 +241,5 @@ class Cotisation
         }
         return $frequences;
     }
+    
 }

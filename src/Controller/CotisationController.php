@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Cotisation;
 use App\Form\CotisationType;
+use App\Entity\Participer;
 use App\Repository\CotisationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,35 +16,61 @@ use Symfony\Component\Routing\Annotation\Route;
 class CotisationController extends AbstractController
 {
     #[Route('/', name: 'app_cotisation_index', methods: ['GET'])]
-    public function index(CotisationRepository $cotisationRepository): Response
+    public function index(CotisationRepository $cotisationRepository, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('cotisation/index.html.twig', [
-            'cotisations' => $cotisationRepository->findAll(),
-        ]);
-
+        $utilisateur = $this->getUser();
         
+        // Option 1: Utiliser le repository avec une méthode personnalisée
+        $mesCotisations = $cotisationRepository->findCotisationsForUser($utilisateur);
+        
+        // OU Option 2: Utiliser une requête DQL directement
+        $query = $entityManager->createQuery(
+            'SELECT c FROM App\Entity\Cotisation c
+             JOIN App\Entity\Participer p WITH c.id = p.cotisation
+             WHERE p.utilisateur = :utilisateur'
+        )->setParameter('utilisateur', $utilisateur);
+        
+        $mesCotisations = $query->getResult();
+        
+        return $this->render('cotisation/index.html.twig', [
+            'cotisations' => $mesCotisations,
+        ]);
     }
 
     #[Route('/new', name: 'app_cotisation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $cotisation = new Cotisation();
-        $form = $this->createForm(CotisationType::class, $cotisation);
-        $form->handleRequest($request);
+public function new(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $cotisation = new Cotisation();
+    $form = $this->createForm(CotisationType::class, $cotisation);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($cotisation);
-            $entityManager->flush();
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Définir l'utilisateur courant comme créateur
+        $utilisateur = $this->getUser();
+        $cotisation->setCreateur($utilisateur);
+        
+        $entityManager->persist($cotisation);
+        $entityManager->flush();
+        
+        // Créer l'entrée dans la table participer
+        $participation = new Participer();
+        $participation->setCotisation($cotisation);
+        $participation->setUtilisateur($utilisateur);
+        $participation->setDateEntree(new \DateTime());
+        $participation->setProprietaire(true);
+        
+        $entityManager->persist($participation);
+        $entityManager->flush();
 
-            $this->addFlash('success', 'La cotisation a été créée avec succès.');
-            return $this->redirectToRoute('app_cotisation_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('cotisation/new.html.twig', [
-            'cotisation' => $cotisation,
-            'form' => $form,
-        ]);
+        $this->addFlash('success', 'La cotisation a été créée avec succès.');
+        return $this->redirectToRoute('app_cotisation_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    return $this->render('cotisation/new.html.twig', [
+        'cotisation' => $cotisation,
+        'form' => $form,
+    ]);
+}
 
     #[Route('/{id}', name: 'app_cotisation_show', methods: ['GET'])]
     public function show(Cotisation $cotisation): Response
@@ -160,6 +187,90 @@ class CotisationController extends AbstractController
         return $this->redirectToRoute('app_cotisation_show', ['id' => $id]);
     }
 
+    #[Route('/{id}/join', name: 'app_cotisation_join', methods: ['POST'])]
+public function joinCotisation(Cotisation $cotisation, EntityManagerInterface $entityManager): Response
+{
+    $utilisateur = $this->getUser();
     
+    // Vérifier si l'utilisateur est déjà membre de cette cotisation
+    $participationExistante = $entityManager->getRepository(Participer::class)->findOneBy([
+        'cotisation' => $cotisation,
+        'utilisateur' => $utilisateur
+    ]);
+    
+    if (!$participationExistante) {
+        $participation = new Participer();
+        $participation->setCotisation($cotisation);
+        $participation->setUtilisateur($utilisateur);
+        $participation->setDateEntree(new \DateTime());
+        $participation->setProprietaire(false);
+        
+        $entityManager->persist($participation);
+        $entityManager->flush();
+        
+        $this->addFlash('success', 'Vous avez rejoint cette cotisation avec succès.');
+    } else {
+        $this->addFlash('info', 'Vous êtes déjà membre de cette cotisation.');
+    }
+    
+    return $this->redirectToRoute('app_cotisation_show', ['id' => $cotisation->getId()]);
+}
+
+#[Route('/search-member', name: 'app_search_member', methods: ['POST'])]
+public function searchMember(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $telephone = $request->request->get('phone');
+    
+    $utilisateur = $entityManager->getRepository(Utilisateur::class)->findOneBy(['telephone' => $telephone]);
+    
+    if ($utilisateur) {
+        return $this->json([
+            'found' => true,
+            'user' => [
+                'id' => $utilisateur->getId(),
+                'nom' => $utilisateur->getNom(),
+                'prenom' => $utilisateur->getPrenom(),
+                'telephone' => $utilisateur->getTelephone(),
+                'initials' => substr($utilisateur->getNom(), 0, 1) . substr($utilisateur->getPrenom(), 0, 1)
+            ]
+        ]);
+    }
+    
+    return $this->json(['found' => false]);
+}
+
+#[Route('/{id}/add-member/{userId}', name: 'app_cotisation_add_member', methods: ['POST'])]
+public function addMember(Cotisation $cotisation, int $userId, EntityManagerInterface $entityManager): Response
+{
+    $utilisateur = $entityManager->getRepository(Utilisateur::class)->find($userId);
+    
+    if (!$utilisateur) {
+        $this->addFlash('error', 'Utilisateur non trouvé.');
+        return $this->redirectToRoute('app_cotisation_show', ['id' => $cotisation->getId()]);
+    }
+    
+    // Vérifier si l'utilisateur est déjà membre
+    $participationExistante = $entityManager->getRepository(Participer::class)->findOneBy([
+        'cotisation' => $cotisation,
+        'utilisateur' => $utilisateur
+    ]);
+    
+    if (!$participationExistante) {
+        $participation = new Participer();
+        $participation->setCotisation($cotisation);
+        $participation->setUtilisateur($utilisateur);
+        $participation->setDateEntree(new \DateTime());
+        $participation->setProprietaire(false);
+        
+        $entityManager->persist($participation);
+        $entityManager->flush();
+        
+        $this->addFlash('success', 'Membre ajouté avec succès.');
+    } else {
+        $this->addFlash('info', 'Cet utilisateur est déjà membre de cette cotisation.');
+    }
+    
+    return $this->redirectToRoute('app_cotisation_show', ['id' => $cotisation->getId()]);
+}
 }
     
