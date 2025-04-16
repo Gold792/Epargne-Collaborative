@@ -4,7 +4,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <link rel="stylesheet" href="{{ asset('css/listecotisation.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/listecotisatio.css') }}">
     <style>
         /* Styles spécifiques pour la page de détails */
         .edit-title-btn {
@@ -187,7 +187,7 @@
             right: 0;
             bottom: 0;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            z-index: 10000;
             justify-content: center;
             align-items: center;
         }
@@ -195,7 +195,7 @@
         .modal {
             background-color: white;
             border-radius: 12px;
-            width: 90%;
+            width: 150%;
             max-width: 500px;
             padding: 0;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
@@ -340,6 +340,10 @@
                     Ajouter un membre
                 </button>
 
+                <a href="#" class="btn btn-success">
+                    <span class="btn-icon">💳</span>
+                    Faire un paiement
+                </a>
             </div>
         </div>
         
@@ -372,10 +376,13 @@
             <div class="form-section">
                 <div class="editable-title">
                     <h2>{{ cotisation.titre }}</h2>
-                    <button class="btn btn-sm btn-outline edit-title-btn" id="editTitleBtn">
+                    {# <button class="btn btn-sm btn-outline edit-title-btn" id="editTitleBtn">
                         <span class="btn-icon">✏️</span>
                         Modifier
-                    </button>
+                    </button> #}
+                    <a href="{{ path('app_cotisation_edit', {'id': cotisation.id}) }}" class="btn btn-sm btn-secondary">
+                        <span class="btn-icon">✏️</span> Modifier les informations de la cotisations
+                    </a>
 
                 </div>
                 
@@ -549,7 +556,7 @@
     </div>
     
     <!-- Modal pour l'ajout d'un membre -->
-    <div class="modal-overlay" id="addMemberModal">
+    <div class="modal-overlay" id="addMemberModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 1000; justify-content: center; align-items: center; padding: 2rem;">
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title">Ajouter un membre</h3>
