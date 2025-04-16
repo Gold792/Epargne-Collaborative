@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/cotisation')]
-class CreationCotisationController extends AbstractController
+class CotisationController extends AbstractController
 {
     #[Route('/', name: 'app_cotisation_index', methods: ['GET'])]
     public function index(CotisationRepository $cotisationRepository): Response
@@ -20,6 +20,8 @@ class CreationCotisationController extends AbstractController
         return $this->render('cotisation/index.html.twig', [
             'cotisations' => $cotisationRepository->findAll(),
         ]);
+
+        
     }
 
     #[Route('/new', name: 'app_cotisation_new', methods: ['GET', 'POST'])]
@@ -157,5 +159,7 @@ class CreationCotisationController extends AbstractController
         // Rediriger vers la page de la cotisation
         return $this->redirectToRoute('app_cotisation_show', ['id' => $id]);
     }
+
+    
 }
     
